@@ -258,7 +258,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
         <div class="actions">
             <div style="margin-right:auto">
                 <div id="modCount">0 item dipilih</div>
-                <div id="modTotal" class="total">$0</div>
+                <div id="modTotal" class="total">$NR 0</div>
                 <div id="modGrand" class="muted"></div>
             </div>
 
@@ -322,7 +322,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
         </div>
     </div>
 
-    <label>Quantity — maksimum 5 unit/item/hari</label>
+    <label>Quantity</label>
     <div id="sellQty" class="qty-grid"></div>
 
     <div class="actions">
@@ -383,22 +383,22 @@ button:disabled{opacity:.55;cursor:not-allowed}
     <div class="stats">
         <div class="stat">
             <small>Total Pembelian</small>
-            <div id="totalBuy" class="total">$0</div>
+            <div id="totalBuy" class="total">$NR 0</div>
         </div>
 
         <div class="stat">
             <small>Total Penjualan</small>
-            <div id="totalSell" class="total">$0</div>
+            <div id="totalSell" class="total">$NR 0</div>
         </div>
 
         <div class="stat">
             <small>Total Instansi</small>
-            <div id="totalInst" class="total">$0</div>
+            <div id="totalInst" class="total">$NR 0</div>
         </div>
 
         <div class="stat">
             <small>Total Profit</small>
-            <div id="totalProfit" class="total">$0</div>
+            <div id="totalProfit" class="total">$NR 0</div>
         </div>
     </div>
 </section>
@@ -780,20 +780,20 @@ const MOD_DATA = {
 };
 
 const BUY = {
-    "ADVANCE REPAIR KIT":15000,
-    "REPAIR KIT":11000,
-    "TIRE KIT":9000,
-    "CLEANING KIT":4000
+    "ADVANCE REPAIR KIT": 15000,
+    "REPAIR KIT": 6000,
+    "TIRE KIT": 8000,
+    "CLEANING KIT": 4000
 };
 
 const SELL = {
-    "REPAIR KIT":15000,
-    "TIRE KIT":10000,
-    "CLEANING KIT":5000
+    "REPAIR KIT": 7000,
+    "TIRE KIT": 10000,
+    "CLEANING KIT": 5000
 };
 
 const INST = {
-    "REPAIR KIT":15000,
+    "REPAIR KIT":7000,
     "TIRE KIT":10000,
     "CLEANING KIT":5000
 };
@@ -848,7 +848,7 @@ function renderModChoices(){
                             <option
                                 value="${price}"
                                 data-name="${name}">
-                                ${name} - $${money(price)}
+                                ${name} - $NR ${money(price)}
                             </option>
                         `).join("")}
                     </select>
@@ -926,12 +926,12 @@ function renderModResult(){
         `;
 
         items.forEach(item => {
-            text += `- ${item.name} - $${money(item.price)}\n`;
+            text += `- ${item.name} - $NR ${money(item.price)}\n`;
 
             html += `
                 <div class="selected-row">
                     <span>
-                        • ${item.name} ($${money(item.price)})
+                        • ${item.name} ($NR ${money(item.price)})
                     </span>
 
                     <button
@@ -951,16 +951,16 @@ function renderModResult(){
 
     text +=
         `🚗 MOBIL IMPORT: ${importActive ? "YA (+50%)" : "TIDAK"}\n` +
-        `BASE TOTAL: $${money(totals.base)}\n` +
-        `GRAND TOTAL: $${money(totals.grand)}`;
+        `BASE TOTAL: $NR ${money(totals.base)}\n` +
+        `GRAND TOTAL: $NR ${money(totals.grand)}`;
 
     $("modSelected").innerHTML = html;
     $("modResult").value = text;
     $("modCount").textContent = `${modItems.length} item dipilih`;
-    $("modTotal").textContent = "$" + money(totals.base);
+    $("modTotal").textContent = "$NR " + money(totals.base);
 
     $("modGrand").textContent = importActive
-        ? `Import 50%: $${money(totals.fee)} · Grand Total: $${money(totals.grand)}`
+        ? `Import 50%: $NR ${money(totals.fee)} · Grand Total: $NR ${money(totals.grand)}`
         : "";
 
     $("modService").value = [
@@ -1013,7 +1013,7 @@ async function sendModWebhook(){
     ].join(", ") || "-";
 
     const details = modItems
-        .map(item => `• ${item.name} — $${money(item.price)}`)
+        .map(item => `• ${item.name} — $NR ${money(item.price)}`)
         .join("\n")
         .slice(0,1000);
 
@@ -1058,17 +1058,17 @@ async function sendModWebhook(){
                 },
                 {
                     name:"💵 Base Total",
-                    value:"$" + money(totals.base),
+                    value:"$NR " + money(totals.base),
                     inline:true
                 },
                 {
                     name:"💸 Import 50%",
-                    value:"$" + money(totals.fee),
+                    value:"$NR " + money(totals.fee),
                     inline:true
                 },
                 {
                     name:"💰 GRAND TOTAL",
-                    value:"$" + money(totals.grand),
+                    value:"$NR " + money(totals.grand),
                     inline:false
                 },
                 {
@@ -1094,7 +1094,7 @@ function buildToolUI(prices,target,prefix){
         .map(([name,price]) => `
             <div class="price-row">
                 <span>${name}</span>
-                <span class="price">$${money(price)}</span>
+                <span class="price">$NR ${money(price)}</span>
             </div>
         `).join("");
 
@@ -1183,20 +1183,6 @@ function addPurchase(){
     alert("✅ Pembelian ditambah.");
 }
 
-function dailySold(name){
-    return transactions
-        .filter(transaction =>
-            transaction.type === "sell" &&
-            transaction.date === today()
-        )
-        .flatMap(transaction => transaction.items)
-        .filter(item => item.name === name)
-        .reduce(
-            (sum,item) => sum + item.quantity,
-            0
-        );
-}
-
 function addSale(){
     const worker = $("sellWorker").value.trim();
     const customer = $("toolCustomer").value.trim();
@@ -1207,12 +1193,6 @@ function addSale(){
         return;
     }
 
-    for(const item of items){
-        if(dailySold(item.name) + item.quantity > 5){
-            alert(`${item.name} melebihi limit harian 5 unit.`);
-            return;
-        }
-    }
 
     const total = items.reduce(
         (sum,item) => sum + item.subtotal,
@@ -1311,10 +1291,10 @@ function renderTools(){
         }
     });
 
-    $("totalBuy").textContent = "$" + money(buyTotal);
-    $("totalSell").textContent = "$" + money(sellTotal);
-    $("totalInst").textContent = "$" + money(instansiTotal);
-    $("totalProfit").textContent = "$" + money(profitTotal);
+    $("totalBuy").textContent = "$NR " + money(buyTotal);
+    $("totalSell").textContent = "$NR " + money(sellTotal);
+    $("totalInst").textContent = "$NR " + money(instansiTotal);
+    $("totalProfit").textContent = "$NR " + money(profitTotal);
 
     renderTransactions();
 }
@@ -1373,17 +1353,17 @@ function renderTransactions(){
 
                     ${transaction.items.map(item => `
                         ${esc(item.name)} × ${item.quantity}
-                        = $${money(item.subtotal)}
+                        = $NR ${money(item.subtotal)}
                     `).join("<br>")}
 
                     <br><br>
 
                     💵 Total:
-                    <b>$${money(transaction.total)}</b>
+                    <b>$NR ${money(transaction.total)}</b>
 
                     ${
                         transaction.type === "sell"
-                            ? `<br>📈 Profit: $${money(transaction.profit)}`
+                            ? `<br>📈 Profit: $NR ${money(transaction.profit)}`
                             : ""
                     }
 
@@ -1391,7 +1371,7 @@ function renderTransactions(){
                         transaction.type === "instansi"
                             ? `<br>🏷️ Diskon:
                                ${transaction.discountPercent}%
-                               (-$${money(transaction.discount)})`
+                               (-$NR ${money(transaction.discount)})`
                             : ""
                     }
                 </div>
@@ -1473,7 +1453,7 @@ async function sendLatest(type){
 
             value:transaction.items
                 .map(item =>
-                    `• ${item.name} × ${item.quantity} — $${money(item.subtotal)}`
+                    `• ${item.name} × ${item.quantity} — $NR ${money(item.subtotal)}`
                 )
                 .join("\n"),
 
@@ -1481,7 +1461,7 @@ async function sendLatest(type){
         },
         {
             name:isBuy ? "💵 TOTAL BELI" : "💵 TOTAL JUAL",
-            value:"$" + money(transaction.total),
+            value:"$NR " + money(transaction.total),
             inline:true
         }
     ];
@@ -1489,7 +1469,7 @@ async function sendLatest(type){
     if(isSell){
         fields.push({
             name:"📈 PROFIT",
-            value:"$" + money(transaction.profit || 0),
+            value:"$NR " + money(transaction.profit || 0),
             inline:true
         });
     }
@@ -1500,7 +1480,7 @@ async function sendLatest(type){
 
             value:
                 `${transaction.discountPercent || 0}% ` +
-                `(-$${money(transaction.discount || 0)})`,
+                `(-$NR ${money(transaction.discount || 0)})`,
 
             inline:true
         });

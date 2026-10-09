@@ -204,60 +204,102 @@ button:disabled{opacity:.55;cursor:not-allowed}
     .select-row button{width:100%}
 }
 
-/* NARASI DATA THEME ONLY — BLACK / CYAN / RED
-   CSS-only overrides: page content, scripts, prices, webhooks and data remain untouched. */
+/* NARASI GARAGE LOGO PALETTE — THEME / COLOURS ONLY
+   Cyan (#55c6d2), silver (#bbc4c9), red (#ff1018) and black (#050608).
+   Layout, markup, prices, calculation, transactions and webhooks are unchanged. */
 :root{
-    --ng-bg:#070b0e;
-    --ng-panel:#111820;
-    --ng-panel2:#16222a;
-    --ng-input:#090f16;
-    --ng-border:#33515c;
-    --ng-text:#f5fbff;
-    --ng-muted:#a0b8c2;
-    --ng-cyan:#00e7f0;
-    --ng-red:#ff5368;
+    --ng-bg:#050608;
+    --ng-panel:#10171b;
+    --ng-panel2:#151b20;
+    --ng-input:#090d10;
+    --ng-border:#42575e;
+    --ng-text:#f4f8f9;
+    --ng-muted:#b2bec4;
+    --ng-cyan:#55c6d2;
+    --ng-cyan-bright:#00e7ed;
+    --ng-silver:#bbc4c9;
+    --ng-red:#ff1018;
 }
 html{scroll-behavior:smooth}
-body{color:var(--ng-text)}
+body{
+    background:
+        radial-gradient(circle at 10% -8%,rgba(64,185,204,.22),transparent 43%),
+        radial-gradient(circle at 94% 0%,rgba(255,15,24,.15),transparent 44%),
+        linear-gradient(180deg,#0c1014,#050608);
+    color:var(--ng-text);
+}
 body::before{
     content:"";
     position:fixed;
     inset:0;
-    opacity:.2;
+    opacity:.15;
     pointer-events:none;
-    background-image:radial-gradient(#4e7b83 .5px,transparent .5px);
+    background-image:radial-gradient(#79a4ac .5px,transparent .5px);
     background-size:24px 24px;
 }
 .container{position:relative}
 .header{
-    background:linear-gradient(120deg,rgba(16,47,57,.86),rgba(23,15,24,.92));
-    border:1px solid #335b67;
+    background:
+        linear-gradient(115deg,#10272e 0%,#171b20 54%,#251215 100%) padding-box,
+        linear-gradient(100deg,#55c6d2 0%,#bbc4c9 50%,#ff1018 100%) border-box;
+    border:1px solid transparent;
     border-radius:22px;
     padding:25px 20px;
-    box-shadow:0 18px 55px #03070baa;
+    box-shadow:0 18px 55px rgba(0,0,0,.56);
 }
-.header h1{color:#f5fbff}
-.header p{color:#afc2c8}
-.card,.box,.mod-section{box-shadow:0 12px 35px #03080d66}
-.card h2,.box h2,.mod-section h2{color:#e5faff}
-label,.group label{color:#b9e1e7}
-input,select,textarea{border-color:#38515b;color:var(--ng-text)}
+.header h1{
+    color:#e4f7f9;
+    background:linear-gradient(100deg,#63cbd7 12%,#f4f8f9 50%,#ff3b40 88%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:none;
+}
+.header p{color:#bac5ca}
+.logo{
+    filter:drop-shadow(-8px 0 16px rgba(85,198,210,.28))
+           drop-shadow(8px 0 16px rgba(255,16,24,.25));
+}
+.card,.box,.mod-section{
+    background:linear-gradient(150deg,#162229,#11151a 75%);
+    border-color:#36494f;
+    box-shadow:0 12px 35px rgba(0,0,0,.4);
+}
+.card h2,.box h2,.mod-section h2{color:#dcedf0}
+label,.group label{color:#b9dce1}
+input,select,textarea{
+    background:var(--ng-input);
+    color:var(--ng-text);
+    border-color:#3b5158;
+}
 input:focus,select:focus,textarea:focus{
     border-color:var(--ng-cyan);
-    box-shadow:0 0 0 3px rgba(0,231,240,.12);
+    box-shadow:0 0 0 3px rgba(85,198,210,.18);
 }
-input::placeholder,textarea::placeholder{color:#68818b}
-button{box-shadow:0 8px 20px rgba(2,217,227,.15)}
-button:hover{filter:brightness(1.08)}
+input::placeholder,textarea::placeholder{color:#869ca5}
+button{
+    background:linear-gradient(110deg,#176e7b,#55c6d2);
+    color:#fff;
+    box-shadow:0 8px 20px rgba(85,198,210,.18);
+}
+button:hover{filter:brightness(1.1)}
 .tabs button[style*="outline"]{outline-color:var(--ng-cyan) !important}
-.price-list,.qty-box,.stat,.transaction{background:rgba(6,15,22,.62)}
-.price-row,.selected-row{border-bottom-color:rgba(127,181,194,.15)}
-.blue{background:linear-gradient(110deg,#215880,#4389f8)}
-.green{background:linear-gradient(110deg,#007e71,#25c9af)}
-.red,.delete{background:linear-gradient(110deg,#ae263e,#ff5368)}
+.price-list,.qty-box,.stat,.transaction{background:rgba(5,10,14,.66)}
+.price-row,.selected-row{border-bottom-color:rgba(187,196,201,.15)}
+.price,.qty-box b{color:#9cdee6}
+.muted,.status{color:var(--ng-silver)}
+.blue{background:linear-gradient(110deg,#176e7b,#55c6d2)}
+.green{background:linear-gradient(110deg,#4a6a72,#bbc4c9);color:#071015}
+.red,.delete{background:linear-gradient(110deg,#b71b27,#ff1018);color:#fff}
 .transaction{border-left-color:var(--ng-cyan)}
-.transaction.sell{border-left-color:#4389f8}
-.transaction.instansi{border-left-color:#5ce9b4}
+.transaction.sell{border-left-color:var(--ng-red)}
+.transaction.instansi{border-left-color:var(--ng-silver)}
+.transaction small{color:#a8b6bc}
+.notice{
+    background:rgba(85,198,210,.09);
+    border-color:rgba(85,198,210,.3);
+    color:#b9e5e9;
+}
 </style>
 </head>
 

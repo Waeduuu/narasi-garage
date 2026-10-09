@@ -12,7 +12,7 @@
 
 body{
     font-family:Poppins,sans-serif;
-    background:radial-gradient(circle at top,#351052,#180923 45%,#08070d);
+    background:radial-gradient(circle at 10% -8%,#0c343d 0,transparent 43%),radial-gradient(circle at 94% 0%,#3e1520 0,transparent 44%),linear-gradient(180deg,#0e1218,#05090c);
     color:#fff;
     min-height:100vh;
     padding:25px 15px
@@ -26,16 +26,16 @@ body{
     max-width:65%;
     display:block;
     margin:0 auto 12px;
-    filter:drop-shadow(0 0 20px rgba(192,132,252,.55))
+    filter:drop-shadow(-8px 0 16px rgba(0,231,240,.25)) drop-shadow(8px 0 16px rgba(255,83,104,.25))
 }
 
 .header h1{
     font-size:48px;
-    color:#f5d0fe;
-    text-shadow:0 0 25px rgba(192,132,252,.5)
+    color:#dffaff;
+    text-shadow:0 0 25px rgba(0,231,240,.25)
 }
 
-.header p,label{color:#d8b4fe}
+.header p,label{color:#b9e1e7}
 .tabs{display:flex;gap:10px;margin:25px 0}
 .tabs button{flex:1}
 .tab{display:none}
@@ -54,8 +54,8 @@ body{
 }
 
 .card,.box,.mod-section{
-    background:rgba(255,255,255,.055);
-    border:1px solid rgba(255,255,255,.08);
+    background:linear-gradient(150deg,#1a2930,#121b23 75%);
+    border:1px solid #334852;
     border-radius:18px;
     padding:20px;
     backdrop-filter:blur(10px)
@@ -64,7 +64,7 @@ body{
 .box{margin:20px 0}
 
 .card h2,.box h2,.mod-section h2{
-    color:#f5d0fe;
+    color:#dffaff;
     margin-bottom:15px;
     font-size:20px
 }
@@ -88,14 +88,14 @@ input,select,textarea{
     padding:12px 14px;
     border:1px solid rgba(255,255,255,.1);
     border-radius:11px;
-    background:#160e20;
+    background:#090f16;
     color:#fff;
     outline:none
 }
 
 input:focus,select:focus{
-    border-color:#a855f7;
-    box-shadow:0 0 0 2px rgba(168,85,247,.16)
+    border-color:#00e7f0;
+    box-shadow:0 0 0 2px rgba(0,231,240,.16)
 }
 
 textarea{min-height:210px;resize:vertical}
@@ -105,7 +105,7 @@ button{
     padding:12px 17px;
     border-radius:11px;
     cursor:pointer;
-    background:linear-gradient(135deg,#9333ea,#c084fc);
+    background:linear-gradient(110deg,#007b87,#00d9e6);
     color:#fff;
     font-weight:700;
     transition:.2s
@@ -134,7 +134,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
 }
 
 .price-row:last-child{border:0}
-.price{color:#f5d0fe;font-weight:700}
+.price{color:#dffaff;font-weight:700}
 
 .qty-box,.stat{
     background:rgba(0,0,0,.17);
@@ -144,15 +144,15 @@ button:disabled{opacity:.55;cursor:not-allowed}
 
 .qty-box b{
     display:block;
-    color:#f5d0fe;
+    color:#dffaff;
     font-size:12px;
     margin-bottom:7px
 }
 
 .wide{grid-column:1/-1}
-.blue{background:linear-gradient(135deg,#2563eb,#60a5fa)}
-.green{background:linear-gradient(135deg,#059669,#34d399)}
-.red,.delete{background:#dc2626}
+.blue{background:linear-gradient(135deg,#285f8d,#4389f8)}
+.green{background:linear-gradient(135deg,#008c7f,#5ce9b4)}
+.red,.delete{background:#ce3251}
 .delete{padding:6px 9px;font-size:11px}
 
 .actions{
@@ -163,19 +163,19 @@ button:disabled{opacity:.55;cursor:not-allowed}
 }
 
 .total{font-size:36px;font-weight:700}
-.muted,.status{color:#c4b5fd;font-size:13px}
+.muted,.status{color:#98b0b9;font-size:13px}
 .status{min-height:20px;margin-top:9px;text-align:center}
 
 .transaction{
     background:rgba(0,0,0,.17);
-    border-left:3px solid #a855f7;
+    border-left:3px solid #00e7f0;
     border-radius:11px;
     padding:13px;
     margin-top:10px
 }
 
-.transaction.sell{border-color:#3b82f6}
-.transaction.instansi{border-color:#10b981}
+.transaction.sell{border-color:#4389f8}
+.transaction.instansi{border-color:#00d3c8}
 
 .transaction-head{
     display:flex;
@@ -183,7 +183,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
     gap:10px
 }
 
-.transaction small{color:#9ca3af}
+.transaction small{color:#90a8b4}
 .transaction-info{font-size:13px;line-height:1.7;margin-top:8px}
 
 .notice{
@@ -191,7 +191,7 @@ button:disabled{opacity:.55;cursor:not-allowed}
     border:1px solid rgba(16,185,129,.25);
     background:rgba(16,185,129,.1);
     border-radius:11px;
-    color:#a7f3d0;
+    color:#73e9b5;
     margin-bottom:14px;
     font-size:13px
 }
@@ -203,6 +203,61 @@ button:disabled{opacity:.55;cursor:not-allowed}
     .select-row,.tabs,.actions{flex-direction:column}
     .select-row button{width:100%}
 }
+
+/* NARASI DATA THEME ONLY — BLACK / CYAN / RED
+   CSS-only overrides: page content, scripts, prices, webhooks and data remain untouched. */
+:root{
+    --ng-bg:#070b0e;
+    --ng-panel:#111820;
+    --ng-panel2:#16222a;
+    --ng-input:#090f16;
+    --ng-border:#33515c;
+    --ng-text:#f5fbff;
+    --ng-muted:#a0b8c2;
+    --ng-cyan:#00e7f0;
+    --ng-red:#ff5368;
+}
+html{scroll-behavior:smooth}
+body{color:var(--ng-text)}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    opacity:.2;
+    pointer-events:none;
+    background-image:radial-gradient(#4e7b83 .5px,transparent .5px);
+    background-size:24px 24px;
+}
+.container{position:relative}
+.header{
+    background:linear-gradient(120deg,rgba(16,47,57,.86),rgba(23,15,24,.92));
+    border:1px solid #335b67;
+    border-radius:22px;
+    padding:25px 20px;
+    box-shadow:0 18px 55px #03070baa;
+}
+.header h1{color:#f5fbff}
+.header p{color:#afc2c8}
+.card,.box,.mod-section{box-shadow:0 12px 35px #03080d66}
+.card h2,.box h2,.mod-section h2{color:#e5faff}
+label,.group label{color:#b9e1e7}
+input,select,textarea{border-color:#38515b;color:var(--ng-text)}
+input:focus,select:focus,textarea:focus{
+    border-color:var(--ng-cyan);
+    box-shadow:0 0 0 3px rgba(0,231,240,.12);
+}
+input::placeholder,textarea::placeholder{color:#68818b}
+button{box-shadow:0 8px 20px rgba(2,217,227,.15)}
+button:hover{filter:brightness(1.08)}
+.tabs button[style*="outline"]{outline-color:var(--ng-cyan) !important}
+.price-list,.qty-box,.stat,.transaction{background:rgba(6,15,22,.62)}
+.price-row,.selected-row{border-bottom-color:rgba(127,181,194,.15)}
+.blue{background:linear-gradient(110deg,#215880,#4389f8)}
+.green{background:linear-gradient(110deg,#007e71,#25c9af)}
+.red,.delete{background:linear-gradient(110deg,#ae263e,#ff5368)}
+.transaction{border-left-color:var(--ng-cyan)}
+.transaction.sell{border-left-color:#4389f8}
+.transaction.instansi{border-left-color:#5ce9b4}
 </style>
 </head>
 

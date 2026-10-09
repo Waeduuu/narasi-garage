@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#170b24" />
+<title>Narasi Garage | Withdraw & Deposit</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {--bg:#070b0e;--panel:#111820;--panel2:#16222a;--input:#090f16;--border:#33515c;--text:#f5fbff;--muted:#a0b8c2;--purple:#0ce6f0;--light:#a0fbff;--blue:#4389f8;--green:#5ce9b4;--red:#ff5368}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 10% -8%,#0c343d 0,transparent 43%),radial-gradient(circle at 94% 0%,#3e1520 0,transparent 44%),linear-gradient(180deg,#0e1218,#05090c);min-height:100vh;font-family:Poppins,system-ui,sans-serif;color:var(--text)}
+body::before{content:'';position:fixed;inset:0;opacity:.2;pointer-events:none;background-image:radial-gradient(#4e7b83 0.5px, transparent 0.5px);background-size:24px 24px}
+.wrap{width:min(1100px,calc(100% - 36px));margin:32px auto 55px;position:relative}
+.hero{padding:27px 35px 26px;border:1px solid #335b67;border-radius:22px;background:linear-gradient(120deg,rgba(16,47,57,.9),rgba(23,15,24,.95)),radial-gradient(circle at 95%,rgba(255,70,95,.23),transparent 45%);box-shadow:0 18px 65px #03070baa}
+.brand{display:flex;align-items:center;gap:20px}.logo-holder{flex:none;width:230px;height:130px;display:grid;place-items:center}.logo-holder img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(-8px 0 16px #02dbe333) drop-shadow(8px 0 16px #ff435133)}.logo-fallback{display:none;align-items:center;justify-content:center;width:108px;height:96px;border:2px solid #15d8e5;border-radius:20px;background:linear-gradient(135deg,#0b4851,#23101c);font-weight:800;font-size:42px;color:#e3feff;text-shadow:0 0 14px #50e9f9}
+.kicker{font-size:11px;letter-spacing:3.2px;color:#90dae5;font-weight:700}.title{font-size:clamp(28px,4.8vw,48px);font-weight:800;line-height:1.17;margin:7px 0;color:#f5fbff}.title span{color:#00e7f0}.desc{color:#afc2c8;font-size:13px;line-height:1.7;margin:8px 0 0}.head-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:20px 0}.pill{border:1px solid #33515d;background:#152329;border-radius:999px;padding:8px 13px;font-size:11px;color:#c0d6d9}.pill i{display:inline-block;width:7px;height:7px;background:#e7a954;border-radius:50%;margin-right:6px}.pill.ready i{background:#58d9a1}.settings-btn{border:1px solid #355e6b;border-radius:10px;background:#17262c;padding:10px 15px;color:#e4faff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer}.settings-btn:hover{border-color:var(--purple)}
+.info{padding:13px 17px;border:1px solid #33515c;border-left:3px solid #07d3e3;background:#11222a;border-radius:12px;font-size:12px;color:#bddce3;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px}.card{border:1px solid #334852;border-radius:20px;padding:25px;background:linear-gradient(150deg,#1a2930,#121b23 75%);box-shadow:0 12px 35px #03080d66;min-width:0}.card h2{font-size:23px;margin:0;color:#f2fdff;letter-spacing:-.5px}.card .sub{font-size:12px;color:#aac3cd;margin:5px 0 20px}.bar{width:52px;height:4px;border-radius:6px;margin:13px 0 17px}.bar.deposit{background:linear-gradient(90deg,#00e7f0,#9bfaff)}.bar.withdraw{background:linear-gradient(90deg,#ff3651,#ffa2aa)}
+label{display:block;font-size:12px;color:#b9e1e7;margin-bottom:6px;font-weight:600}.field{margin-bottom:15px}.input{display:block;width:100%;background:var(--input);border:1px solid #38515b;border-radius:11px;color:#fff;font:inherit;font-size:13px;padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s}.input:focus{border-color:#00e7f0;box-shadow:0 0 0 3px #00e7f022}.input::placeholder{color:#68818b}.input:disabled{opacity:.7}textarea.input{min-height:105px;resize:vertical}.two{display:grid;grid-template-columns:1.3fr .7fr;gap:12px}.hint{font-size:10px;color:#9ebec5;margin-top:5px}
+.btn{width:100%;border:0;color:#fff;font-family:inherit;font-size:13px;font-weight:800;padding:14px 15px;border-radius:11px;cursor:pointer;transition:transform .15s,filter .15s}.btn:hover{transform:translateY(-1px);filter:brightness(1.07)}.btn:disabled{cursor:wait;opacity:.58}.deposit-btn{background:linear-gradient(100deg,#007b87,#00d9e6);box-shadow:0 8px 20px #02d9e333}.withdraw-btn{background:linear-gradient(100deg,#be2741,#ff516e);box-shadow:0 8px 20px #fc314e30}.button-row{display:flex;gap:9px}.secondary{width:auto;min-width:120px;background:#16262d;border:1px solid #365460}.feedback{font-size:12px;margin-top:12px;min-height:19px}.feedback.error{color:#ffa0b2}.feedback.success{color:#73e9b5}.feedback.wait{color:#ecd09b}
+.history{margin-top:23px;padding:22px 25px;border:1px solid #334852;border-radius:20px;background:linear-gradient(130deg,#15272d,#191821)}.history h3{font-size:18px;margin:0}.history-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px}.muted{font-size:12px;color:#98b0b9}.log-list{display:grid;gap:10px}.log{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:#0e181e;border:1px solid #38545c;border-radius:11px;padding:12px 14px}.log-title{font-weight:700;font-size:13px}.log-detail{font-size:11px;color:#bed4dc;white-space:pre-line;word-break:break-word;margin-top:5px}.log-type{font-size:10px;font-weight:800;letter-spacing:.5px;padding:5px 8px;border-radius:7px;border:1px solid}.log-type.deposit{color:#75e8b5;background:#19402f;border-color:#31694a}.log-type.withdraw{color:#ffa1bd;background:#40172d;border-color:#793455}.empty{text-align:center;color:#98b0bc;font-size:12px;padding:26px;border:1px dashed #42606b;border-radius:10px}
+footer{text-align:center;margin:24px 0;color:#7f9ca7;font-size:11px}
+.dialog{position:fixed;z-index:10;inset:0;background:#050a0ee0;display:none;align-items:center;justify-content:center;padding:20px}.dialog.open{display:flex}.dialog-content{width:min(500px,100%);background:#15232c;border:1px solid #267b89;box-shadow:0 25px 90px #0009;padding:24px;border-radius:18px}.dialog-content h3{font-size:22px;margin:0 0 5px}.dialog-content p{font-size:12px;color:#a4c6cf;line-height:1.6}.dialog-actions{display:flex;gap:10px;margin-top:18px}.dialog-actions button{flex:1}.small-note{font-size:10px;color:#a1bac3;line-height:1.6;margin-top:10px}
+@media(max-width:760px){.wrap{width:min(100% - 20px,600px);margin:12px auto}.hero{padding:23px}.brand{gap:8px;align-items:center;flex-direction:column;text-align:center}.logo-holder{width:190px;height:112px}.logo-fallback{width:75px;height:75px;font-size:31px}.kicker{font-size:9px;letter-spacing:2px}.title{font-size:27px}.desc{font-size:11px}.grid{grid-template-columns:1fr;gap:13px}.card{padding:20px}.history{padding:18px}.head-actions{margin:14px 0}.history-top{align-items:flex-start}.log{flex-direction:column}.two{grid-template-columns:1fr 115px}}
+@media(max-width:380px){.two{grid-template-columns:1fr}.logo-holder{width:150px}.title{font-size:23px}.hero{padding:17px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div class="brand">
+      <div class="logo-holder"><img src="../Narasi_Garage.png" alt="Narasi Garage logo" onerror="this.hidden=true;this.nextElementSibling.style.display='flex'" /><div class="logo-fallback" aria-hidden="true">NG</div></div>
+      <div><div class="kicker">NARASI GARAGE • MANAGEMENT SYSTEM</div><h1 class="title">WITHDRAW <span>&</span> DEPOSIT</h1><p class="desc">Record items entering and leaving the garage. No prices, cash, or fixed item list.</p></div>
+    </div>
+  </header>
+  <div class="head-actions"><div id="connectionBadge" class="pill"><i></i> DISCORD NOT CONFIGURED</div><button class="settings-btn" id="openSettings" type="button">⚙ Discord Settings</button></div>
+  <p class="info">Type any item name and details. Records are sent to Discord only after you connect the secure webhook relay in Settings.</p>
+  <section class="grid" aria-label="Deposit and Withdraw forms">
+    <form class="card" data-action="deposit">
+      <h2>📥 Deposit</h2><p class="sub">Record items added to the garage.</p><div class="bar deposit"></div>
+      <div class="field"><label for="deposit-staff">Staff / IC Name *</label><input class="input" id="deposit-staff" name="staff" autocomplete="name" maxlength="80" placeholder="Enter staff name" required /></div>
+      <div class="two"><div class="field"><label for="deposit-item">Item / Description *</label><input class="input" id="deposit-item" name="item" maxlength="140" placeholder="Type any item" required /></div><div class="field"><label for="deposit-qty">Quantity</label><input class="input" id="deposit-qty" name="quantity" type="number" min="1" max="999999" step="1" placeholder="Optional" /></div></div>
+      <div class="field"><label for="deposit-note">Notes / Details</label><textarea class="input" id="deposit-note" name="note" maxlength="750" placeholder="Additional details or reason (optional)"></textarea></div>
+      <button class="btn deposit-btn" type="submit">＋ Send Deposit to Discord</button><div class="feedback" role="status" aria-live="polite"></div>
+    </form>
+    <form class="card" data-action="withdraw">
+      <h2>📤 Withdraw</h2><p class="sub">Record items removed from the garage.</p><div class="bar withdraw"></div>
+      <div class="field"><label for="withdraw-staff">Staff / IC Name *</label><input class="input" id="withdraw-staff" name="staff" autocomplete="name" maxlength="80" placeholder="Enter staff name" required /></div>
+      <div class="two"><div class="field"><label for="withdraw-item">Item / Description *</label><input class="input" id="withdraw-item" name="item" maxlength="140" placeholder="Type any item" required /></div><div class="field"><label for="withdraw-qty">Quantity</label><input class="input" id="withdraw-qty" name="quantity" type="number" min="1" max="999999" step="1" placeholder="Optional" /></div></div>
+      <div class="field"><label for="withdraw-note">Notes / Details</label><textarea class="input" id="withdraw-note" name="note" maxlength="750" placeholder="Additional details or reason (optional)"></textarea></div>
+      <button class="btn withdraw-btn" type="submit">－ Send Withdraw to Discord</button><div class="feedback" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+  <section class="history" aria-labelledby="historyTitle">
+    <div class="history-top"><div><h3 id="historyTitle">📋 Recent Submissions</h3><span class="muted">Successfully sent from this browser only</span></div><button class="settings-btn" id="clearHistory" type="button">Clear Local History</button></div>
+    <div id="logList" class="log-list"></div>
+  </section>
+  <footer>NARASI GARAGE • WITHDRAW & DEPOSIT • Powered by GitHub Pages</footer>
+</main>
+<div class="dialog" id="settingsDialog" role="dialog" aria-modal="true" aria-labelledby="settingsHeading">
+  <div class="dialog-content"><h3 id="settingsHeading">Discord Connection</h3>
+    <p>Connect a secure Cloudflare Worker relay. Never paste a Discord webhook URL into this public website.</p>
+    <div class="field"><label for="relayUrl">Relay URL</label><input id="relayUrl" class="input" type="url" inputmode="url" placeholder="https://your-worker.workers.dev" /></div>
+    <div class="field"><label for="accessKey">Access Key</label><input id="accessKey" class="input" type="password" placeholder="Private relay access key" autocomplete="off" /></div>
+    <div class="dialog-actions"><button id="closeSettings" class="btn secondary" type="button">Cancel</button><button id="saveSettings" class="btn deposit-btn" type="button">Save Settings</button></div>
+    <p class="small-note">Relay URL is stored in this browser; the access key is held for this browser tab session only. The actual Discord webhook stays secret in the Worker.</p>
+  </div>
+</div>
+<script>
+(()=>{'use strict';
+const $=s=>document.querySelector(s);
+const STORAGE='narasi-withdraw-deposit-history-v1';
+const RELAY_STORAGE='narasi-withdraw-deposit-relay-v1';
+let relay=localStorage.getItem(RELAY_STORAGE)||'';
+let access=sessionStorage.getItem('narasi-relay-session-access')||'';
+let history=[];
+try{const obj=JSON.parse(localStorage.getItem(STORAGE)||'[]');if(Array.isArray(obj))history=obj.slice(0,30)}catch(e){}
+const esc=s=>String(s).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+const badge=$('#connectionBadge');
+function updateBadge(){badge.classList.toggle('ready',!!(relay&&access));badge.innerHTML='<i></i> '+(relay&&access?'DISCORD RELAY CONNECTED':'DISCORD NOT CONFIGURED')}
+function drawHistory(){const out=$('#logList');out.innerHTML=history.length?history.map(t=>`<div class="log"><div><div class="log-title">${esc(t.item)}${t.quantity?' × '+esc(t.quantity):''}</div><div class="log-detail">Staff: ${esc(t.staff)}${t.note?'\nNotes: '+esc(t.note):''}\n${esc(t.timestamp)} · ${esc(t.id)}</div></div><span class="log-type ${esc(t.action)}">${t.action==='deposit'?'DEPOSIT':'WITHDRAW'}</span></div>`).join(''):'<div class="empty">No submissions yet. Connect Discord and submit a record to start.</div>'}
+function openSettings(){ $('#relayUrl').value=relay;$('#accessKey').value=access;$('#settingsDialog').classList.add('open');$('#relayUrl').focus() }
+function closeSettings(){$('#settingsDialog').classList.remove('open')}
+$('#openSettings').addEventListener('click',openSettings);$('#closeSettings').addEventListener('click',closeSettings);
+$('#settingsDialog').addEventListener('click',e=>{if(e.target.id==='settingsDialog')closeSettings()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSettings()});
+$('#saveSettings').addEventListener('click',()=>{
+  const next=$('#relayUrl').value.trim().replace(/\/+$/,'');const key=$('#accessKey').value.trim();
+  if(next&&!/^https:\/\/[a-z\d.-]+(?::\d+)?(?:\/[^?#]*)?$/i.test(next)){alert('Enter a valid HTTPS relay URL.');return}
+  relay=next;access=key;
+  if(relay)localStorage.setItem(RELAY_STORAGE,relay);else localStorage.removeItem(RELAY_STORAGE);
+  if(access)sessionStorage.setItem('narasi-relay-session-access',access);else sessionStorage.removeItem('narasi-relay-session-access');
+  updateBadge();closeSettings();
+});
+$('#clearHistory').addEventListener('click',()=>{if(!history.length)return;if(confirm('Clear only the history saved in this browser? Discord messages will not be deleted.')){history=[];localStorage.removeItem(STORAGE);drawHistory()}});
+for(const form of document.querySelectorAll('form[data-action]')){
+  form.addEventListener('submit',async e=>{
+    e.preventDefault();
+    const fb=form.querySelector('.feedback');fb.className='feedback';fb.textContent='';
+    const obj=Object.fromEntries(new FormData(form));
+    const staff=(obj.staff||'').trim(),item=(obj.item||'').trim(),note=(obj.note||'').trim();
+    const qty=obj.quantity?Number(obj.quantity):null;
+    if(!staff||!item){fb.className='feedback error';fb.textContent='Staff name and item details are required.';return}
+    if(qty!==null&&(!Number.isSafeInteger(qty)||qty<1||qty>999999)){fb.className='feedback error';fb.textContent='Quantity must be a whole number between 1 and 999,999.';return}
+    if(!relay||!access){fb.className='feedback error';fb.textContent='Set up your Discord relay and access key first.';openSettings();return}
+    const btn=form.querySelector('button[type=submit]');btn.disabled=true;fb.className='feedback wait';fb.textContent='Sending to Discord...';
+    try{
+      const r=await fetch(relay,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+access},body:JSON.stringify({action:form.dataset.action,staff,item,quantity:qty,note})});
+      const resp=await r.json().catch(()=>({}));
+      if(!r.ok||!resp.ok)throw new Error(resp.error||('Request failed (HTTP '+r.status+').'));
+      const log={action:form.dataset.action,staff,item,quantity:qty,note,id:resp.id||'—',timestamp:resp.timestamp||new Date().toLocaleString('en-GB')};
+      history.unshift(log);history=history.slice(0,30);localStorage.setItem(STORAGE,JSON.stringify(history));drawHistory();form.reset();fb.className='feedback success';fb.textContent='✓ Sent to Discord successfully.';
+    }catch(err){fb.className='feedback error';fb.textContent='Not sent: '+(err.message||'Network error. Check relay settings.')}finally{btn.disabled=false}
+  });
+}
+updateBadge();drawHistory();
+})();
+</script>
+</body>
+</html>

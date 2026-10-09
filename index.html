@@ -101,7 +101,6 @@ $('sendMod').addEventListener('click',async()=>{
  {name:'💰 GRAND TOTAL',value:'**$NR '+money(t.grand)+'**',inline:false}
  ],footer:{text:'NARASI GARAGE • MODIFICATION LOG'},timestamp:new Date().toISOString()}]};
  await postWebhook('mod',payload,'modStatus');
- await postWebhook('mod',payload,'modStatus');
 });
 const kinds=[{type:'buy',title:'🛒 Beli Alat',worker:'Nama Pekerja',button:'➕ Tambah Pembelian',send:'💬 Kirim Data Beli',prices:BUY},{type:'sell',title:'💰 Jual Alat',worker:'Nama Pekerja',button:'➕ Tambah Penjualan',send:'💬 Kirim Data Jual',prices:SELL},{type:'instansi',title:'🏢 Pembelian Instansi — NO LIMIT',worker:'Nama Pekerja',button:'➕ Tambah Transaksi',send:'💬 Kirim Data Instansi',prices:INST}];
 function renderRecapForms(){

@@ -83,18 +83,24 @@ async function postWebhook(type,payload,statusId){const url=WEBHOOKS[type];if(!u
 $('sendMod').addEventListener('click',async()=>{
  if(!modItems.length){alert('Pilih modifikasi dahulu.');return}
  const t=modTotals(),services=[...new Set(modItems.map(x=>x.category))].join(', ')||'-';
- const payload={username:'Narasi Garage Calculator',embeds:[{title:'🚗 REKAP MODIF 🚗',description:'Rekod modifikasi kenderaan Narasi Garage.',color:10181046,fields:[
- {name:'👨‍🔧 Nama Mekanik',value:safeText($('modMechanic').value||'-'),inline:true},
- {name:'⭐ Senior / Petinggi',value:safeText($('modSenior').value||'-'),inline:true},
- {name:'👤 Customer',value:safeText($('modCustomer').value||'-'),inline:true},
- {name:'🚗 Plat Kenderaan',value:safeText($('modPlate').value||'-'),inline:false},
- {name:'🛠️ Jenis Layanan',value:safeText(services),inline:false},
- {name:'🚙 Mobil Import',value:importActive?'YA':'TIDAK',inline:true},
- {name:'💵 Base Total',value:'$NR '+money(t.base),inline:true},
- {name:'💸 Import 50%',value:'$NR '+money(t.fee),inline:true},
- {name:'💰 GRAND TOTAL',value:'$NR '+money(t.grand),inline:false},
- {name:'📋 Detail Modifikasi',value:safeText(modItems.map(x=>`• ${x.name} — $NR ${money(x.price)}`).join('\n').slice(0,1000)||'-'),inline:false}
- ],footer:{text:'Narasi Garage • Sistem Modifikasi'},timestamp:new Date().toISOString()}]};
+ const details=modItems.map(x=>'• '+x.name+' — $NR '+money(x.price)).join('\n').slice(0,1000)||'-';
+ const payload={username:'Narasi Garage Calculator',allowed_mentions:{parse:[]},embeds:[{
+ title:'🚗 NARASI GARAGE | MODIFIKASI',
+ description:'**LAPORAN MODIFIKASI KENDARAAN**\nInformasi mekanik, pelanggan, dan rincian biaya.',
+ color:0x4389F8,
+ fields:[
+ {name:'👨‍🔧 MEKANIK',value:safeText($('modMechanic').value||'-'),inline:true},
+ {name:'⭐ SENIOR / PETINGGI',value:safeText($('modSenior').value||'-'),inline:true},
+ {name:'👤 CUSTOMER',value:safeText($('modCustomer').value||'-'),inline:true},
+ {name:'🚘 PLAT KENDARAAN',value:safeText($('modPlate').value||'-'),inline:true},
+ {name:'🌍 KATEGORI',value:importActive?'IMPORT (+50%)':'LOCAL',inline:true},
+ {name:'🛠️ JENIS LAYANAN',value:safeText(services),inline:true},
+ {name:'📋 DETAIL MODIFIKASI',value:safeText(details),inline:false},
+ {name:'💵 HARGA LOCAL',value:'$NR '+money(t.base),inline:true},
+ {name:'💸 BIAYA IMPORT (+50%)',value:'$NR '+money(t.fee),inline:true},
+ {name:'💰 GRAND TOTAL',value:'**$NR '+money(t.grand)+'**',inline:false}
+ ],footer:{text:'NARASI GARAGE • MODIFICATION LOG'},timestamp:new Date().toISOString()}]};
+ await postWebhook('mod',payload,'modStatus');
  await postWebhook('mod',payload,'modStatus');
 });
 const kinds=[{type:'buy',title:'🛒 Beli Alat',worker:'Nama Pekerja',button:'➕ Tambah Pembelian',send:'💬 Kirim Data Beli',prices:BUY},{type:'sell',title:'💰 Jual Alat',worker:'Nama Pekerja',button:'➕ Tambah Penjualan',send:'💬 Kirim Data Jual',prices:SELL},{type:'instansi',title:'🏢 Pembelian Instansi — NO LIMIT',worker:'Nama Pekerja',button:'➕ Tambah Transaksi',send:'💬 Kirim Data Instansi',prices:INST}];
@@ -119,11 +125,29 @@ function renderDashboard(){const totals={buy:0,sell:0,instansi:0,profit:0};trans
 function renderTxRecords(){const search=$('searchTx').value.toLowerCase();const rows=transactions.filter(x=>JSON.stringify(x).toLowerCase().includes(search));$('txRecords').innerHTML=rows.length?rows.map(t=>`<article class="record ${esc(t.type)}"><div class="record-top"><div><b>${t.type==='buy'?'PEMBELIAN':t.type==='sell'?'PENJUALAN':'PEMBELIAN INSTANSI'}</b><br><small>${esc(t.date)} ${esc(t.time)}</small></div><button class="btn sm red" type="button" data-remove-tx="${t.id}">Hapus</button></div><div class="record-info">👨‍🔧 ${esc(t.worker)}\n${t.type==='instansi'?'🏢 '+esc(t.instansi):'👤 '+esc(t.customer)}\n\n${t.items.map(x=>`${esc(x.name)} × ${x.quantity} = $NR ${money(x.subtotal)}`).join('\n')}\n\n💵 Total: $NR ${money(t.total)}${t.type==='sell'?`\n📈 Profit: $NR ${money(t.profit)}`:''}${t.type==='instansi'?`\n🏷️ Diskon: ${t.discountPercent}% (-$NR ${money(t.discount)})`:''}</div></article>`).join(''):'<p class="sub" style="padding:20px;text-align:center">Tiada transaksi.</p>';
  $('txRecords').querySelectorAll('[data-remove-tx]').forEach(b=>b.addEventListener('click',()=>{if(confirm('Hapus transaksi ini?')){transactions=transactions.filter(t=>t.id!==Number(b.dataset.removeTx));saveTx();renderDashboard()}}))}
 $('searchTx').addEventListener('input',renderTxRecords);$('resetTx').addEventListener('click',()=>{if(confirm('Reset SEMUA transaksi?')){transactions=[];saveTx();renderDashboard()}});
-async function sendLatest(type){const t=transactions.find(x=>x.type===type);if(!t){setStatus(type+'Status','❌ Tiada transaksi terbaru jenis ini.','error');return}
- const isBuy=type==='buy',isSell=type==='sell';const title=isBuy?'🛒 REKOD PEMBELIAN ALAT':isSell?'💰 REKOD PENJUALAN ALAT':'🏢 REKOD PEMBELIAN INSTANSI';
- const fields=[{name:'👨‍🔧 NAMA PEKERJA',value:safeText(t.worker),inline:true},{name:type==='instansi'?'🏢 NAMA INSTANSI':'👤 NAMA WARGA',value:safeText(type==='instansi'?t.instansi:t.customer),inline:true},{name:'📦 DAFTAR ALAT',value:safeText(t.items.map(x=>`${x.name} × ${x.quantity} = $NR ${money(x.subtotal)}`).join('\n')),inline:false},{name:'💵 TOTAL '+(isBuy?'BELI':'JUAL'),value:'$NR '+money(t.total),inline:true}];
- if(isSell)fields.push({name:'📈 PROFIT',value:'$NR '+money(t.profit||0),inline:true});if(type==='instansi')fields.push({name:'🏷️ DISKON',value:`${t.discountPercent||0}% (-$NR ${money(t.discount||0)})`,inline:true});
- const payload={username:'Narasi Garage',embeds:[{title,description:isBuy?'Rekod pembelian alat Narasi Garage.':isSell?'Rekod penjualan alat Narasi Garage.':'Rekod pembelian alat oleh instansi.',color:isSell?3447003:type==='instansi'?5763719:10181046,fields,footer:{text:'Narasi Garage • Sistem Data Alat'},timestamp:new Date().toISOString()}]};await postWebhook(type,payload,type+'Status');}
+async function sendLatest(type){
+ const t=transactions.find(x=>x.type===type);
+ if(!t){setStatus(type+'Status','❌ Tiada transaksi terbaru jenis ini.','error');return}
+ const isBuy=type==='buy',isSell=type==='sell',isInst=type==='instansi';
+ const title=isBuy?'🛒 NARASI GARAGE | PEMBELIAN ALAT':isSell?'💰 NARASI GARAGE | PENJUALAN ALAT':'🏢 NARASI GARAGE | PEMBELIAN INSTANSI';
+ const description=isBuy?'**LAPORAN PEMBELIAN PERLENGKAPAN BENGKEL**':isSell?'**LAPORAN TRANSAKSI PENJUALAN**':'**LAPORAN TRANSAKSI INSTANSI**';
+ const itemDetails=t.items.map(x=>'• **'+x.name+'** × '+x.quantity+' Unit\n  Harga Satuan: $NR '+money(x.price)+'\n  Subtotal: $NR '+money(x.subtotal)).join('\n\n')||'-';
+ const fields=[{name:'👨‍🔧 NAMA PEKERJA',value:safeText(t.worker),inline:true}];
+ if(isSell)fields.push({name:'👤 NAMA WARGA',value:safeText(t.customer),inline:true});
+ if(isInst)fields.push({name:'🏢 NAMA INSTANSI',value:safeText(t.instansi),inline:true});
+ fields.push({name:'📦 DETAIL BARANG',value:safeText(itemDetails),inline:false});
+ if(isSell){fields.push({name:'💸 TOTAL MODAL',value:'$NR '+money(t.cost||0),inline:true});
+ fields.push({name:'💵 TOTAL PENJUALAN',value:'$NR '+money(t.total),inline:true});
+ fields.push({name:'📈 PROFIT',value:'**$NR '+money(t.profit||0)+'**',inline:false});}
+ else if(isInst){fields.push({name:'💵 SUBTOTAL',value:'$NR '+money(t.gross??t.total),inline:true});
+ fields.push({name:'🏷️ DISKON',value:(t.discountPercent||0)+'% (-$NR '+money(t.discount||0)+')',inline:true});
+ fields.push({name:'💰 GRAND TOTAL',value:'**$NR '+money(t.total)+'**',inline:false});}
+ else fields.push({name:'💵 TOTAL PEMBELIAN',value:'**$NR '+money(t.total)+'**',inline:false});
+ const payload={username:'Narasi Garage',allowed_mentions:{parse:[]},embeds:[{
+ title,description,color:isBuy?0xE6B341:isSell?0x22B981:0xA77CF3,
+ fields,footer:{text:'NARASI GARAGE • '+(isBuy?'PURCHASE LOG':isSell?'SALES LOG':'INSTANSI LOG')},timestamp:new Date().toISOString()}]};
+ await postWebhook(type,payload,type+'Status');
+}
 // Screenshot control. Clipboard paste works only when browser has clipboard permission and focus.
 const photoMap=new WeakMap(),urls=new WeakMap();let lastPhotoArea=null;
 function photoReady(form,file){const box=form.querySelector('.upload'),pic=box.querySelector('img'),remove=box.querySelector('.remove-photo'),old=urls.get(form);if(old)URL.revokeObjectURL(old);urls.delete(form);
@@ -143,7 +167,18 @@ for(const form of document.querySelectorAll('.data-form')){const box=form.queryS
  if(quantity!==null&&(!Number.isSafeInteger(quantity)||quantity<1||quantity>999999)){status.className='status error';status.textContent='Quantity mesti nombor bulat antara 1 dan 999999.';return}
  const action=form.dataset.action,now=new Date(),wib=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(now);
  const id=(action==='deposit'?'DP-':'WD-')+now.toISOString().replace(/[-:.TZ]/g,'').slice(0,14)+'-'+((crypto.randomUUID?.()||String(Math.random())).slice(0,8)).toUpperCase();
- const payload={username:'Narasi Garage Logs',allowed_mentions:{parse:[]},embeds:[{title:action==='deposit'?'📥 NARASI GARAGE | DEPOSIT':'📤 NARASI GARAGE | WITHDRAW',color:action==='deposit'?0x00DDE9:0xFF4565,fields:[{name:'👤 Staff / IC Name',value:safeText(staff),inline:true},{name:'📦 Item / Description',value:safeText(item),inline:true},{name:'🔢 Quantity',value:quantity===null?'Not specified':String(quantity),inline:true},{name:'📝 Notes / Reason',value:safeText(note||'—'),inline:false}],footer:{text:'Narasi Garage • Withdraw & Deposit • '+wib+' WIB'},timestamp:now.toISOString()}]};
+ const payload={username:'Narasi Garage Logs',allowed_mentions:{parse:[]},embeds:[{
+ title:action==='deposit'?'📥 NARASI GARAGE | DEPOSIT':'📤 NARASI GARAGE | WITHDRAW',
+ description:action==='deposit'?'**LAPORAN BARANG MASUK BENGKEL**':'**LAPORAN PENGAMBILAN BARANG BENGKEL**',
+ color:action==='deposit'?0x00DBE7:0xFF3651,
+ fields:[
+ {name:'👨‍🔧 NAMA PEKERJA',value:safeText(staff),inline:true},
+ {name:'📦 NAMA BARANG',value:safeText(item),inline:true},
+ {name:action==='deposit'?'🔢 JUMLAH MASUK':'🔢 JUMLAH KELUAR',value:quantity===null?'Tidak ditentukan':quantity+' Unit',inline:true},
+ {name:action==='deposit'?'📝 KETERANGAN':'📝 ALASAN PENGAMBILAN',value:safeText(note||'—'),inline:false}
+ ],
+ footer:{text:'NARASI GARAGE • '+(action==='deposit'?'DEPOSIT LOG':'WITHDRAW LOG')+' • '+wib+' WIB'},
+ timestamp:now.toISOString()}]};
  const file=photoMap.get(form)||null;let name='';if(file){name='narasi-'+action+'-'+id+'.'+(file.type==='image/jpeg'?'jpg':file.type.split('/')[1]);payload.embeds[0].image={url:'attachment://'+name};payload.attachments=[{id:0,filename:name}]}
  const btn=form.querySelector('[type=submit]');btn.disabled=true;status.className='status warn';status.textContent='⏳ Mengirim permintaan ke Discord...';
  try{const data=new FormData();data.append('payload_json',JSON.stringify(payload));if(file)data.append('files[0]',file,name);await fetch(WEBHOOKS.data,{method:'POST',mode:'no-cors',body:data});

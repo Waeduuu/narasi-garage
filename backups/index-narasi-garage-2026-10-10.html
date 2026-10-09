@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Narasi Garage - Sistem Gabungan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    font-family:Poppins,sans-serif;
+    background:radial-gradient(circle at 10% -8%,#0c343d 0,transparent 43%),radial-gradient(circle at 94% 0%,#3e1520 0,transparent 44%),linear-gradient(180deg,#0e1218,#05090c);
+    color:#fff;
+    min-height:100vh;
+    padding:25px 15px
+}
+
+.container{max-width:1200px;margin:auto}
+.header{text-align:center;margin-bottom:25px}
+
+.logo{
+    width:150px;
+    max-width:65%;
+    display:block;
+    margin:0 auto 12px;
+    filter:drop-shadow(-8px 0 16px rgba(0,231,240,.25)) drop-shadow(8px 0 16px rgba(255,83,104,.25))
+}
+
+.header h1{
+    font-size:48px;
+    color:#dffaff;
+    text-shadow:0 0 25px rgba(0,231,240,.25)
+}
+
+.header p,label{color:#b9e1e7}
+.tabs{display:flex;gap:10px;margin:25px 0}
+.tabs button{flex:1}
+.tab{display:none}
+.tab.active{display:block}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px
+}
+
+.mod-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:16px
+}
+
+.card,.box,.mod-section{
+    background:linear-gradient(150deg,#1a2930,#121b23 75%);
+    border:1px solid #334852;
+    border-radius:18px;
+    padding:20px;
+    backdrop-filter:blur(10px)
+}
+
+.box{margin:20px 0}
+
+.card h2,.box h2,.mod-section h2{
+    color:#dffaff;
+    margin-bottom:15px;
+    font-size:20px
+}
+
+.form-grid,.qty-grid,.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+    gap:12px
+}
+
+.group{margin-bottom:15px}
+
+.group label,label{
+    display:block;
+    font-size:13px;
+    margin-bottom:6px
+}
+
+input,select,textarea{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:11px;
+    background:#090f16;
+    color:#fff;
+    outline:none
+}
+
+input:focus,select:focus{
+    border-color:#00e7f0;
+    box-shadow:0 0 0 2px rgba(0,231,240,.16)
+}
+
+textarea{min-height:210px;resize:vertical}
+
+button{
+    border:0;
+    padding:12px 17px;
+    border-radius:11px;
+    cursor:pointer;
+    background:linear-gradient(110deg,#007b87,#00d9e6);
+    color:#fff;
+    font-weight:700;
+    transition:.2s
+}
+
+button:hover{transform:translateY(-1px);opacity:.92}
+button:disabled{opacity:.55;cursor:not-allowed}
+
+.select-row{display:flex;gap:10px}
+.select-row select{flex:1}
+
+.price-list{
+    background:rgba(0,0,0,.15);
+    border-radius:12px;
+    padding:6px 12px;
+    margin-bottom:16px
+}
+
+.price-row,.selected-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:9px 0;
+    border-bottom:1px solid rgba(255,255,255,.07)
+}
+
+.price-row:last-child{border:0}
+.price{color:#dffaff;font-weight:700}
+
+.qty-box,.stat{
+    background:rgba(0,0,0,.17);
+    border-radius:12px;
+    padding:12px
+}
+
+.qty-box b{
+    display:block;
+    color:#dffaff;
+    font-size:12px;
+    margin-bottom:7px
+}
+
+.wide{grid-column:1/-1}
+.blue{background:linear-gradient(135deg,#285f8d,#4389f8)}
+.green{background:linear-gradient(135deg,#008c7f,#5ce9b4)}
+.red,.delete{background:#ce3251}
+.delete{padding:6px 9px;font-size:11px}
+
+.actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:15px
+}
+
+.total{font-size:36px;font-weight:700}
+.muted,.status{color:#98b0b9;font-size:13px}
+.status{min-height:20px;margin-top:9px;text-align:center}
+
+.transaction{
+    background:rgba(0,0,0,.17);
+    border-left:3px solid #00e7f0;
+    border-radius:11px;
+    padding:13px;
+    margin-top:10px
+}
+
+.transaction.sell{border-color:#4389f8}
+.transaction.instansi{border-color:#00d3c8}
+
+.transaction-head{
+    display:flex;
+    justify-content:space-between;
+    gap:10px
+}
+
+.transaction small{color:#90a8b4}
+.transaction-info{font-size:13px;line-height:1.7;margin-top:8px}
+
+.notice{
+    padding:11px;
+    border:1px solid rgba(16,185,129,.25);
+    background:rgba(16,185,129,.1);
+    border-radius:11px;
+    color:#73e9b5;
+    margin-bottom:14px;
+    font-size:13px
+}
+
+@media(max-width:760px){
+    .grid{grid-template-columns:1fr}
+    .wide{grid-column:auto}
+    .header h1{font-size:36px}
+    .select-row,.tabs,.actions{flex-direction:column}
+    .select-row button{width:100%}
+}
+
+/* NARASI GARAGE LOGO PALETTE — THEME / COLOURS ONLY
+   Cyan (#55c6d2), silver (#bbc4c9), red (#ff1018) and black (#050608).
+   Layout, markup, prices, calculation, transactions and webhooks are unchanged. */
+:root{
+    --ng-bg:#050608;
+    --ng-panel:#10171b;
+    --ng-panel2:#151b20;
+    --ng-input:#090d10;
+    --ng-border:#42575e;
+    --ng-text:#f4f8f9;
+    --ng-muted:#b2bec4;
+    --ng-cyan:#55c6d2;
+    --ng-cyan-bright:#00e7ed;
+    --ng-silver:#bbc4c9;
+    --ng-red:#ff1018;
+}
+html{scroll-behavior:smooth}
+body{
+    background:
+        radial-gradient(circle at 10% -8%,rgba(64,185,204,.22),transparent 43%),
+        radial-gradient(circle at 94% 0%,rgba(255,15,24,.15),transparent 44%),
+        linear-gradient(180deg,#0c1014,#050608);
+    color:var(--ng-text);
+}
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    opacity:.15;
+    pointer-events:none;
+    background-image:radial-gradient(#79a4ac .5px,transparent .5px);
+    background-size:24px 24px;
+}
+.container{position:relative}
+.header{
+    background:
+        linear-gradient(115deg,#10272e 0%,#171b20 54%,#251215 100%) padding-box,
+        linear-gradient(100deg,#55c6d2 0%,#bbc4c9 50%,#ff1018 100%) border-box;
+    border:1px solid transparent;
+    border-radius:22px;
+    padding:25px 20px;
+    box-shadow:0 18px 55px rgba(0,0,0,.56);
+}
+.header h1{
+    color:#e4f7f9;
+    background:linear-gradient(100deg,#63cbd7 12%,#f4f8f9 50%,#ff3b40 88%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    text-shadow:none;
+}
+.header p{color:#bac5ca}
+.logo{
+    filter:drop-shadow(-8px 0 16px rgba(85,198,210,.28))
+           drop-shadow(8px 0 16px rgba(255,16,24,.25));
+}
+.card,.box,.mod-section{
+    background:linear-gradient(150deg,#162229,#11151a 75%);
+    border-color:#36494f;
+    box-shadow:0 12px 35px rgba(0,0,0,.4);
+}
+.card h2,.box h2,.mod-section h2{color:#dcedf0}
+label,.group label{color:#b9dce1}
+input,select,textarea{
+    background:var(--ng-input);
+    color:var(--ng-text);
+    border-color:#3b5158;
+}
+input:focus,select:focus,textarea:focus{
+    border-color:var(--ng-cyan);
+    box-shadow:0 0 0 3px rgba(85,198,210,.18);
+}
+input::placeholder,textarea::placeholder{color:#869ca5}
+button{
+    background:linear-gradient(110deg,#176e7b,#55c6d2);
+    color:#fff;
+    box-shadow:0 8px 20px rgba(85,198,210,.18);
+}
+button:hover{filter:brightness(1.1)}
+.tabs button[style*="outline"]{outline-color:var(--ng-cyan) !important}
+.price-list,.qty-box,.stat,.transaction{background:rgba(5,10,14,.66)}
+.price-row,.selected-row{border-bottom-color:rgba(187,196,201,.15)}
+.price,.qty-box b{color:#9cdee6}
+.muted,.status{color:var(--ng-silver)}
+.blue{background:linear-gradient(110deg,#176e7b,#55c6d2)}
+.green{background:linear-gradient(110deg,#4a6a72,#bbc4c9);color:#071015}
+.red,.delete{background:linear-gradient(110deg,#b71b27,#ff1018);color:#fff}
+.transaction{border-left-color:var(--ng-cyan)}
+.transaction.sell{border-left-color:var(--ng-red)}
+.transaction.instansi{border-left-color:var(--ng-silver)}
+.transaction small{color:#a8b6bc}
+.notice{
+    background:rgba(85,198,210,.09);
+    border-color:rgba(85,198,210,.3);
+    color:#b9e5e9;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header class="header">
+    <img src="./Narasi_Garage.png"
+         class="logo"
+         alt="Narasi Garage Logo"
+         onerror="this.style.display='none'">
+
+    <h1>NARASI GARAGE</h1>
+    <p>Kalkulator modifikasi & pengurusan data alat</p>
+</header>
+
+<nav class="tabs">
+    <button onclick="openTab('modTab',this)" class="tab-button">
+        🚗 Kalkulator Modif
+    </button>
+
+    <button onclick="openTab('toolsTab',this)" class="tab-button blue">
+        🧰 Data Alat
+    </button>
+</nav>
+
+<main id="modTab" class="tab active">
+
+    <div class="box">
+        <h2>Data Pekerja & Pelanggan</h2>
+
+        <div class="form-grid">
+            <input id="modMechanic" placeholder="Nama Mekanik">
+            <input id="modSenior" placeholder="Petinggi / Senior Mekanik">
+            <input id="modCustomer" placeholder="Nama Customer">
+            <input id="modPlate" placeholder="Plat Kendaraan">
+            <input id="modService" placeholder="Jenis Layanan" readonly>
+        </div>
+    </div>
+
+    <div id="modList" class="mod-grid"></div>
+
+    <div class="box">
+        <h2>Daftar Pilihan</h2>
+
+        <div id="modSelected"></div>
+
+        <textarea
+            id="modResult"
+            readonly
+            placeholder="Detail modifikasi..."></textarea>
+
+        <div class="actions">
+            <div style="margin-right:auto">
+                <div id="modCount">0 item dipilih</div>
+                <div id="modTotal" class="total">$NR 0</div>
+                <div id="modGrand" class="muted"></div>
+            </div>
+
+            <button id="importBtn" onclick="toggleImport()">
+                🚗 Mobil Import +50%
+            </button>
+
+            <button class="blue" onclick="sendModWebhook()">
+                💬 Kirim Discord
+            </button>
+
+            <button class="red" onclick="resetMod()">
+                🔄 Reset Modif
+            </button>
+        </div>
+
+        <div id="modStatus" class="status"></div>
+    </div>
+</main>
+
+<main id="toolsTab" class="tab">
+
+<div class="grid">
+
+<section class="card">
+    <h2>🛒 Beli Alat</h2>
+
+    <div id="buyPrices" class="price-list"></div>
+
+    <div class="group">
+        <label>Nama Pekerja</label>
+        <input id="buyWorker" placeholder="Nama pekerja">
+    </div>
+
+    <div id="buyQty" class="qty-grid"></div>
+
+    <div class="actions">
+        <button onclick="addPurchase()">➕ Tambah Pembelian</button>
+        <button class="blue" onclick="sendLatest('buy')">
+            💬 Kirim Data Beli
+        </button>
+    </div>
+
+    <div id="buyStatus" class="status"></div>
+</section>
+
+<section class="card">
+    <h2>💰 Jual Alat</h2>
+
+    <div id="sellPrices" class="price-list"></div>
+
+    <div class="form-grid">
+        <div class="group">
+            <label>Nama Pekerja</label>
+            <input id="sellWorker">
+        </div>
+
+        <div class="group">
+            <label>Nama Warga</label>
+            <input id="toolCustomer">
+        </div>
+    </div>
+
+    <label>Quantity</label>
+    <div id="sellQty" class="qty-grid"></div>
+
+    <div class="actions">
+        <button class="blue" onclick="addSale()">
+            ➕ Tambah Penjualan
+        </button>
+
+        <button class="blue" onclick="sendLatest('sell')">
+            💬 Kirim Data Jual
+        </button>
+    </div>
+
+    <div id="sellStatus" class="status"></div>
+</section>
+
+<section class="card wide">
+    <h2>🏢 Pembelian Instansi — NO LIMIT</h2>
+
+    <div id="instPrices" class="price-list"></div>
+
+    <div class="form-grid">
+        <input id="instName" placeholder="Nama Instansi">
+        <input id="instWorker" placeholder="Nama Pekerja">
+
+        <input
+            type="number"
+            id="instDiscount"
+            min="0"
+            max="100"
+            value="0"
+            placeholder="Diskon %">
+    </div>
+
+    <div class="notice">
+        Diskon dimasukkan secara manual dan quantity instansi tidak mempunyai limit.
+    </div>
+
+    <div id="instQty" class="qty-grid"></div>
+
+    <div class="actions">
+        <button class="green" onclick="addInstansi()">
+            🏢 Tambah Instansi
+        </button>
+
+        <button class="green" onclick="sendLatest('instansi')">
+            💬 Kirim Data Instansi
+        </button>
+    </div>
+
+    <div id="instStatus" class="status"></div>
+</section>
+
+</div>
+
+<section class="box">
+    <h2>📊 Dashboard</h2>
+
+    <div class="stats">
+        <div class="stat">
+            <small>Total Pembelian</small>
+            <div id="totalBuy" class="total">$NR 0</div>
+        </div>
+
+        <div class="stat">
+            <small>Total Penjualan</small>
+            <div id="totalSell" class="total">$NR 0</div>
+        </div>
+
+        <div class="stat">
+            <small>Total Instansi</small>
+            <div id="totalInst" class="total">$NR 0</div>
+        </div>
+
+        <div class="stat">
+            <small>Total Profit</small>
+            <div id="totalProfit" class="total">$NR 0</div>
+        </div>
+    </div>
+</section>
+
+<section class="box">
+    <h2>📋 Rekod Transaksi</h2>
+
+    <input
+        id="search"
+        placeholder="🔎 Cari pekerja, warga, instansi atau alat..."
+        oninput="renderTransactions()">
+
+    <div id="transactions"></div>
+
+    <button
+        class="red"
+        style="margin-top:15px"
+        onclick="resetTransactions()">
+        🗑 Reset Semua Data
+    </button>
+</section>
+
+</main>
+</div>
+
+<script>
+/*
+Masukkan endpoint proxy yang selamat di sini.
+Jangan masukkan token webhook Discord ke dalam fail awam.
+*/
+const WEBHOOKS = {
+    mod: "https://canary.discord.com/api/webhooks/1551174190932041759/I7uo_McmUfTpIei-8bFpIrHk82hKk02oOzUJ_0yYavZGEJW9Iz38kno1UZjPyKUa_4Av",
+    buy: "https://canary.discord.com/api/webhooks/1551175166283751504/0lK7QKa6msBr_MJSffT-lvUVN29t8ibEAhMVu7pH94AIaYWfmxhhWMqI1fG9PiY0W9u6",
+    sell: "https://canary.discord.com/api/webhooks/1551174528850202634/clHFV7FLYAr8mNZNLNSErmJzADMeS8Fc_qMmUvF5hoQ3FY0IwXGhRf-IPdHGnzD8j4oQ",
+    instansi: "https://canary.discord.com/api/webhooks/1551175166283751504/0lK7QKa6msBr_MJSffT-lvUVN29t8ibEAhMVu7pH94AIaYWfmxhhWMqI1fG9PiY0W9u6"
+};
+
+const MOD_DATA = {
+    "PAINT": [
+        [
+            "PRIMARY",
+            30000
+        ],
+        [
+            "SECONDARY",
+            30000
+        ],
+        [
+            "PEARLESCENT",
+            30000
+        ],
+        [
+            "INTERIOR",
+            15000
+        ],
+        [
+            "CHAMELEON",
+            25000
+        ],
+        [
+            "DASHBOARD",
+            15000
+        ]
+    ],
+    "APPEARANCE": [
+        [
+            "SPOILER",
+            75000
+        ],
+        [
+            "FRONT BUMPER",
+            50000
+        ],
+        [
+            "REAR BUMPER",
+            35000
+        ],
+        [
+            "ROOF",
+            25000
+        ],
+        [
+            "SIDE SKIRT",
+            30000
+        ],
+        [
+            "EXHAUST",
+            25000
+        ],
+        [
+            "FRAME (ROLLCAGE)",
+            20000
+        ],
+        [
+            "GRILL",
+            20000
+        ],
+        [
+            "HOOD",
+            30000
+        ],
+        [
+            "LEFT FENDER",
+            15000
+        ],
+        [
+            "RIGHT FENDER",
+            15000
+        ],
+        [
+            "ENGINE BLOCK",
+            20000
+        ],
+        [
+            "LIVERY",
+            15000
+        ],
+        [
+            "TRIM",
+            15000
+        ],
+        [
+            "STRUTS",
+            15000
+        ],
+        [
+            "FRONT VANITY PLATES",
+            15000
+        ],
+        [
+            "LICENSE PLATE HOLDER",
+            15000
+        ],
+        [
+            "LICENSE PLATE",
+            15000
+        ],
+        [
+            "PLAQUE",
+            15000
+        ],
+        [
+            "SPEAKERS",
+            15000
+        ],
+        [
+            "TRUNK",
+            15000
+        ],
+        [
+            "WINGS",
+            30000
+        ],
+        [
+            "FUEL TANK",
+            15000
+        ],
+        [
+            "AERIALS",
+            15000
+        ],
+        [
+            "ARCH COVERS",
+            15000
+        ],
+        [
+            "HORNS",
+            15000
+        ],
+        [
+            "HYDRAULICS",
+            15000
+        ]
+    ],
+    "WINDOW TINT": [
+        [
+            "0%",
+            20000
+        ],
+        [
+            "10%",
+            20000
+        ],
+        [
+            "50%",
+            20000
+        ],
+        [
+            "60%",
+            20000
+        ],
+        [
+            "80%",
+            20000
+        ],
+        [
+            "100%",
+            20000
+        ],
+        [
+            "WINDOW (UMUM)",
+            20000
+        ]
+    ],
+    "INTERIOR": [
+        [
+            "AIR FILTER",
+            15000
+        ],
+        [
+            "INTERIOR",
+            15000
+        ],
+        [
+            "ORNAMENTS",
+            15000
+        ],
+        [
+            "DASHBOARD",
+            15000
+        ],
+        [
+            "DIAL",
+            15000
+        ],
+        [
+            "SHIFTING LEAVERS",
+            15000
+        ],
+        [
+            "DOOR SPEAKER",
+            13000
+        ],
+        [
+            "SEATS",
+            15000
+        ],
+        [
+            "STEERING WHEELS",
+            15000
+        ],
+        [
+            "VEHICLE EXTRAS",
+            20000
+        ]
+    ],
+    "NEON & XENON": [
+        [
+            "NEON ALL 4 SIDE",
+            25000
+        ],
+        [
+            "NEON COLOR",
+            15000
+        ],
+        [
+            "XENON INSTALLATION",
+            25000
+        ],
+        [
+            "XENON COLOR",
+            15000
+        ]
+    ],
+    "WHEEL": [
+        [
+            "WHEEL COLOR",
+            30000
+        ],
+        [
+            "TIRE SMOKE COLOR",
+            30000
+        ],
+        [
+            "WHEEL TYPES",
+            50000
+        ],
+        [
+            "TIRE ENHANCEMENTS",
+            25000
+        ],
+        [
+            "TIRE DESIGN",
+            15000
+        ],
+        [
+            "CAMBER (STANCER)",
+            50000
+        ],
+        [
+            "SPACERS (STANCER)",
+            30000
+        ]
+    ],
+    "PERFORMANCE": [
+        [
+            "ENGINE (CAR)",
+            150000
+        ],
+        [
+            "ENGINE (BIKE)",
+            120000
+        ],
+        [
+            "BRAKES",
+            100000
+        ],
+        [
+            "TRANSMISSION",
+            140000
+        ],
+        [
+            "ARMOUR",
+            150000
+        ],
+        [
+            "TURBO",
+            110000
+        ],
+        [
+            "NITROUS",
+            200000
+        ],
+        [
+            "AIR FILTER (NOS UNLIMITED)",
+            250000
+        ],
+        [
+            "REFILL NOS",
+            25000
+        ]
+    ],
+    "SUSPENSION": [
+        [
+            "LOWERED",
+            15000
+        ],
+        [
+            "STREET",
+            20000
+        ],
+        [
+            "SPORTS",
+            35000
+        ],
+        [
+            "COMPETITION",
+            60000
+        ]
+    ],
+    "EXTRAS": [
+        [
+            "EXTRAS 1",
+            15000
+        ],
+        [
+            "EXTRAS 2",
+            15000
+        ],
+        [
+            "EXTRAS 3",
+            15000
+        ],
+        [
+            "EXTRAS 4",
+            15000
+        ],
+        [
+            "EXTRAS 5",
+            15000
+        ]
+    ],
+    "SERVICE": [
+        [
+            "SERVICE",
+            20000
+        ],
+        [
+            "CUCI",
+            5000
+        ]
+    ]
+};
+
+const BUY = {
+    "ADVANCE REPAIR KIT": 15000,
+    "REPAIR KIT": 6000,
+    "TIRE KIT": 8000,
+    "CLEANING KIT": 4000
+};
+
+const SELL = {
+    "REPAIR KIT": 7000,
+    "TIRE KIT": 10000,
+    "CLEANING KIT": 5000
+};
+
+const INST = {
+    "REPAIR KIT":7000,
+    "TIRE KIT":10000,
+    "CLEANING KIT":5000
+};
+
+let modItems = [];
+let importActive = false;
+
+let transactions = JSON.parse(
+    localStorage.getItem("rkGarageTransactions") || "[]"
+);
+
+const $ = id => document.getElementById(id);
+
+const money = n =>
+    Number(n || 0).toLocaleString("en-US");
+
+const esc = v =>
+    String(v).replace(
+        /[&<>"']/g,
+        c => ({
+            "&":"&amp;",
+            "<":"&lt;",
+            ">":"&gt;",
+            "\"":"&quot;",
+            "'":"&#39;"
+        }[c])
+    );
+
+function openTab(id,button){
+    document.querySelectorAll(".tab").forEach(x =>
+        x.classList.remove("active")
+    );
+
+    $(id).classList.add("active");
+
+    document.querySelectorAll(".tab-button").forEach(x =>
+        x.style.outline = ""
+    );
+
+    button.style.outline = "2px solid #f5d0fe";
+}
+
+function renderModChoices(){
+    $("modList").innerHTML = Object.entries(MOD_DATA)
+        .map(([category,items],index) => `
+            <section class="mod-section">
+                <h2>${category}</h2>
+
+                <div class="select-row">
+                    <select id="modSel${index}">
+                        ${items.map(([name,price]) => `
+                            <option
+                                value="${price}"
+                                data-name="${name}">
+                                ${name} - $NR ${money(price)}
+                            </option>
+                        `).join("")}
+                    </select>
+
+                    <button onclick="addMod('${category}',${index})">
+                        Tambah
+                    </button>
+                </div>
+            </section>
+        `).join("");
+}
+
+function addMod(category,index){
+    const option = $("modSel" + index).selectedOptions[0];
+
+    const item = {
+        category,
+        name: option.dataset.name,
+        price: Number(option.value)
+    };
+
+    if(modItems.some(x =>
+        x.category === category && x.name === item.name
+    )){
+        alert("Item ini sudah ditambahkan.");
+        return;
+    }
+
+    modItems.push(item);
+    renderModResult();
+}
+
+function removeMod(index){
+    modItems.splice(index,1);
+    renderModResult();
+}
+
+function modTotals(){
+    const base = modItems.reduce(
+        (sum,item) => sum + item.price,
+        0
+    );
+
+    const fee = importActive
+        ? Math.round(base * 0.5)
+        : 0;
+
+    return {
+        base,
+        fee,
+        grand: base + fee
+    };
+}
+
+function renderModResult(){
+    const groups = {};
+
+    modItems.forEach((item,index) => {
+        (groups[item.category] ??= []).push({
+            ...item,
+            index
+        });
+    });
+
+    let text = "";
+    let html = "";
+
+    for(const [category,items] of Object.entries(groups)){
+        text += category + ":\n";
+
+        html += `
+            <div class="selected-row">
+                <div style="width:100%">
+                    <b>${category}</b>
+        `;
+
+        items.forEach(item => {
+            text += `- ${item.name} - $NR ${money(item.price)}\n`;
+
+            html += `
+                <div class="selected-row">
+                    <span>
+                        • ${item.name} ($NR ${money(item.price)})
+                    </span>
+
+                    <button
+                        class="delete"
+                        onclick="removeMod(${item.index})">
+                        Hapus
+                    </button>
+                </div>
+            `;
+        });
+
+        text += "\n";
+        html += "</div></div>";
+    }
+
+    const totals = modTotals();
+
+    text +=
+        `🚗 MOBIL IMPORT: ${importActive ? "YA (+50%)" : "TIDAK"}\n` +
+        `BASE TOTAL: $NR ${money(totals.base)}\n` +
+        `GRAND TOTAL: $NR ${money(totals.grand)}`;
+
+    $("modSelected").innerHTML = html;
+    $("modResult").value = text;
+    $("modCount").textContent = `${modItems.length} item dipilih`;
+    $("modTotal").textContent = "$NR " + money(totals.base);
+
+    $("modGrand").textContent = importActive
+        ? `Import 50%: $NR ${money(totals.fee)} · Grand Total: $NR ${money(totals.grand)}`
+        : "";
+
+    $("modService").value = [
+        ...new Set(modItems.map(item => item.category))
+    ].join(", ");
+}
+
+function toggleImport(){
+    importActive = !importActive;
+
+    $("importBtn").textContent = importActive
+        ? "🚗 Mobil Import Aktif ✓"
+        : "🚗 Mobil Import +50%";
+
+    renderModResult();
+}
+
+function resetMod(){
+    if(!confirm("Yakin mahu reset kalkulator modif?")){
+        return;
+    }
+
+    modItems = [];
+    importActive = false;
+
+    [
+        "modMechanic",
+        "modSenior",
+        "modCustomer",
+        "modPlate",
+        "modService"
+    ].forEach(id => {
+        $(id).value = "";
+    });
+
+    $("importBtn").textContent = "🚗 Mobil Import +50%";
+    renderModResult();
+}
+
+async function sendModWebhook(){
+    if(!modItems.length){
+        alert("Pilih modifikasi dahulu.");
+        return;
+    }
+
+    const totals = modTotals();
+
+    const services = [
+        ...new Set(modItems.map(item => item.category))
+    ].join(", ") || "-";
+
+    const details = modItems
+        .map(item => `• ${item.name} — $NR ${money(item.price)}`)
+        .join("\n")
+        .slice(0,1000);
+
+    const payload = {
+        username:"Narasi Garage Calculator",
+
+        embeds:[{
+            title:"🚗 REKAP MODIF 🚗",
+            description:"Rekod modifikasi kenderaan Narasi Garage.",
+            color:10181046,
+
+            fields:[
+                {
+                    name:"👨‍🔧 Nama Mekanik",
+                    value:$("modMechanic").value || "-",
+                    inline:true
+                },
+                {
+                    name:"⭐ Senior / Petinggi",
+                    value:$("modSenior").value || "-",
+                    inline:true
+                },
+                {
+                    name:"👤 Customer",
+                    value:$("modCustomer").value || "-",
+                    inline:true
+                },
+                {
+                    name:"🚗 Plat Kenderaan",
+                    value:$("modPlate").value || "-",
+                    inline:false
+                },
+                {
+                    name:"🛠️ Jenis Layanan",
+                    value:services,
+                    inline:false
+                },
+                {
+                    name:"🚙 Mobil Import",
+                    value:importActive ? "YA" : "TIDAK",
+                    inline:true
+                },
+                {
+                    name:"💵 Base Total",
+                    value:"$NR " + money(totals.base),
+                    inline:true
+                },
+                {
+                    name:"💸 Import 50%",
+                    value:"$NR " + money(totals.fee),
+                    inline:true
+                },
+                {
+                    name:"💰 GRAND TOTAL",
+                    value:"$NR " + money(totals.grand),
+                    inline:false
+                },
+                {
+                    name:"📋 Detail Modifikasi",
+                    value:details || "-",
+                    inline:false
+                }
+            ],
+
+            footer:{
+                text:"Narasi Garage • Sistem Modifikasi"
+            },
+
+            timestamp:new Date().toISOString()
+        }]
+    };
+
+    await postWebhook("mod",payload,"modStatus");
+}
+
+function buildToolUI(prices,target,prefix){
+    $(target).innerHTML = Object.entries(prices)
+        .map(([name,price]) => `
+            <div class="price-row">
+                <span>${name}</span>
+                <span class="price">$NR ${money(price)}</span>
+            </div>
+        `).join("");
+
+    $(prefix + "Qty").innerHTML = Object.keys(prices)
+        .map((name,index) => `
+            <div class="qty-box">
+                <b>${name}</b>
+
+                <input
+                    type="number"
+                    min="0"
+                    value="0"
+                    id="${prefix}Q${index}">
+            </div>
+        `).join("");
+}
+
+function readItems(prices,prefix){
+    return Object.entries(prices)
+        .map(([name,price],index) => ({
+            name,
+            price,
+            quantity:Math.max(
+                0,
+                Number($(prefix + "Q" + index).value) || 0
+            )
+        }))
+        .filter(item => item.quantity)
+        .map(item => ({
+            ...item,
+            subtotal:item.price * item.quantity
+        }));
+}
+
+function today(){
+    return new Date().toISOString().split("T")[0];
+}
+
+function save(){
+    localStorage.setItem(
+        "rkGarageTransactions",
+        JSON.stringify(transactions)
+    );
+}
+
+function clearQty(prefix,count){
+    for(let index = 0; index < count; index++){
+        $(prefix + "Q" + index).value = 0;
+    }
+}
+
+function storeTransaction(transaction){
+    transactions.unshift({
+        id:Date.now(),
+        date:today(),
+        time:new Date().toLocaleTimeString(),
+        ...transaction
+    });
+
+    save();
+    renderTools();
+}
+
+function addPurchase(){
+    const worker = $("buyWorker").value.trim();
+    const items = readItems(BUY,"buy");
+
+    if(!worker || !items.length){
+        alert("Masukkan nama pekerja dan quantity.");
+        return;
+    }
+
+    storeTransaction({
+        type:"buy",
+        worker,
+        customer:"-",
+        instansi:"-",
+        items,
+        total:items.reduce(
+            (sum,item) => sum + item.subtotal,
+            0
+        )
+    });
+
+    clearQty("buy",4);
+    alert("✅ Pembelian ditambah.");
+}
+
+function addSale(){
+    const worker = $("sellWorker").value.trim();
+    const customer = $("toolCustomer").value.trim();
+    const items = readItems(SELL,"sell");
+
+    if(!worker || !customer || !items.length){
+        alert("Lengkapkan pekerja, warga dan quantity.");
+        return;
+    }
+
+
+    const total = items.reduce(
+        (sum,item) => sum + item.subtotal,
+        0
+    );
+
+    const cost = items.reduce(
+        (sum,item) =>
+            sum + item.quantity * (BUY[item.name] || 0),
+        0
+    );
+
+    storeTransaction({
+        type:"sell",
+        worker,
+        customer,
+        instansi:"-",
+        items,
+        total,
+        cost,
+        profit:total - cost
+    });
+
+    clearQty("sell",3);
+    $("toolCustomer").value = "";
+
+    alert("✅ Penjualan ditambah.");
+}
+
+function addInstansi(){
+    const instansi = $("instName").value.trim();
+    const worker = $("instWorker").value.trim();
+    const items = readItems(INST,"inst");
+    const discountPercent =
+        Number($("instDiscount").value) || 0;
+
+    if(!instansi || !worker || !items.length){
+        alert("Lengkapkan instansi, pekerja dan quantity.");
+        return;
+    }
+
+    if(discountPercent < 0 || discountPercent > 100){
+        alert("Diskon mesti 0 hingga 100%.");
+        return;
+    }
+
+    const gross = items.reduce(
+        (sum,item) => sum + item.subtotal,
+        0
+    );
+
+    const discount = gross * discountPercent / 100;
+
+    storeTransaction({
+        type:"instansi",
+        worker,
+        customer:"-",
+        instansi,
+        items,
+        gross,
+        discountPercent,
+        discount,
+        total:gross - discount,
+
+        totalQty:items.reduce(
+            (sum,item) => sum + item.quantity,
+            0
+        )
+    });
+
+    clearQty("inst",4);
+    $("instName").value = "";
+    $("instDiscount").value = 0;
+
+    alert("✅ Transaksi instansi ditambah.");
+}
+
+function renderTools(){
+    let buyTotal = 0;
+    let sellTotal = 0;
+    let instansiTotal = 0;
+    let profitTotal = 0;
+
+    transactions.forEach(transaction => {
+        if(transaction.type === "buy"){
+            buyTotal += transaction.total;
+        }
+
+        if(transaction.type === "sell"){
+            sellTotal += transaction.total;
+            profitTotal += transaction.profit || 0;
+        }
+
+        if(transaction.type === "instansi"){
+            instansiTotal += transaction.total;
+        }
+    });
+
+    $("totalBuy").textContent = "$NR " + money(buyTotal);
+    $("totalSell").textContent = "$NR " + money(sellTotal);
+    $("totalInst").textContent = "$NR " + money(instansiTotal);
+    $("totalProfit").textContent = "$NR " + money(profitTotal);
+
+    renderTransactions();
+}
+
+function renderTransactions(){
+    const query = $("search").value.toLowerCase();
+
+    const rows = transactions.filter(transaction =>
+        JSON.stringify(transaction)
+            .toLowerCase()
+            .includes(query)
+    );
+
+    $("transactions").innerHTML = rows.length
+        ? rows.map(transaction => `
+            <article class="transaction ${transaction.type}">
+
+                <div class="transaction-head">
+                    <div>
+                        <b>
+                            ${
+                                transaction.type === "buy"
+                                    ? "PEMBELIAN"
+                                    : transaction.type === "sell"
+                                        ? "PENJUALAN"
+                                        : "PEMBELIAN INSTANSI"
+                            }
+                        </b>
+
+                        <br>
+
+                        <small>
+                            ${esc(transaction.date)}
+                            ${esc(transaction.time)}
+                        </small>
+                    </div>
+
+                    <button
+                        class="delete"
+                        onclick="deleteTransaction(${transaction.id})">
+                        Hapus
+                    </button>
+                </div>
+
+                <div class="transaction-info">
+                    👨‍🔧 ${esc(transaction.worker)}
+                    <br>
+
+                    ${
+                        transaction.type === "instansi"
+                            ? "🏢 " + esc(transaction.instansi)
+                            : "👤 " + esc(transaction.customer)
+                    }
+
+                    <br><br>
+
+                    ${transaction.items.map(item => `
+                        ${esc(item.name)} × ${item.quantity}
+                        = $NR ${money(item.subtotal)}
+                    `).join("<br>")}
+
+                    <br><br>
+
+                    💵 Total:
+                    <b>$NR ${money(transaction.total)}</b>
+
+                    ${
+                        transaction.type === "sell"
+                            ? `<br>📈 Profit: $NR ${money(transaction.profit)}`
+                            : ""
+                    }
+
+                    ${
+                        transaction.type === "instansi"
+                            ? `<br>🏷️ Diskon:
+                               ${transaction.discountPercent}%
+                               (-$NR ${money(transaction.discount)})`
+                            : ""
+                    }
+                </div>
+            </article>
+        `).join("")
+        : `
+            <p
+                class="muted"
+                style="padding:20px;text-align:center">
+                Tiada transaksi.
+            </p>
+        `;
+}
+
+function deleteTransaction(id){
+    if(confirm("Hapus transaksi ini?")){
+        transactions = transactions.filter(
+            transaction => transaction.id !== id
+        );
+
+        save();
+        renderTools();
+    }
+}
+
+function resetTransactions(){
+    if(confirm("Reset SEMUA transaksi?")){
+        transactions = [];
+        save();
+        renderTools();
+    }
+}
+
+async function sendLatest(type){
+    const transaction = transactions.find(
+        item => item.type === type
+    );
+
+    if(!transaction){
+        alert("Tiada transaksi untuk dihantar.");
+        return;
+    }
+
+    const isBuy = type === "buy";
+    const isSell = type === "sell";
+
+    const title = isBuy
+        ? "🛒 DATA PEMBELIAN ALAT"
+        : isSell
+            ? "💰 DATA PENJUALAN ALAT"
+            : "🏢 DATA PEMBELIAN INSTANSI";
+
+    const partyName = type === "instansi"
+        ? "🏢 Nama Instansi"
+        : "👤 Nama Warga";
+
+    const partyValue = type === "instansi"
+        ? transaction.instansi
+        : transaction.customer || "-";
+
+    const fields = [
+        {
+            name:"👨‍🔧 Nama Pekerja",
+            value:transaction.worker || "-",
+            inline:true
+        },
+        {
+            name:partyName,
+            value:partyValue,
+            inline:true
+        },
+        {
+            name:"📅 Tarikh",
+            value:`${transaction.date} ${transaction.time}`,
+            inline:false
+        },
+        {
+            name:isBuy ? "📦 Alat Dibeli" : "📦 Alat Dijual",
+
+            value:transaction.items
+                .map(item =>
+                    `• ${item.name} × ${item.quantity} — $NR ${money(item.subtotal)}`
+                )
+                .join("\n"),
+
+            inline:false
+        },
+        {
+            name:isBuy ? "💵 TOTAL BELI" : "💵 TOTAL JUAL",
+            value:"$NR " + money(transaction.total),
+            inline:true
+        }
+    ];
+
+    if(isSell){
+        fields.push({
+            name:"📈 PROFIT",
+            value:"$NR " + money(transaction.profit || 0),
+            inline:true
+        });
+    }
+
+    if(type === "instansi"){
+        fields.push({
+            name:"🏷️ DISKON",
+
+            value:
+                `${transaction.discountPercent || 0}% ` +
+                `(-$NR ${money(transaction.discount || 0)})`,
+
+            inline:true
+        });
+    }
+
+    const payload = {
+        username:"Narasi Garage",
+
+        embeds:[{
+            title,
+
+            description:isBuy
+                ? "Rekod pembelian alat Narasi Garage."
+                : isSell
+                    ? "Rekod penjualan alat Narasi Garage."
+                    : "Rekod pembelian alat oleh instansi.",
+
+            color:isSell
+                ? 3447003
+                : type === "instansi"
+                    ? 5763719
+                    : 10181046,
+
+            fields,
+
+            footer:{
+                text:"Narasi Garage • Sistem Data Alat"
+            },
+
+            timestamp:new Date().toISOString()
+        }]
+    };
+
+    await postWebhook(
+        type,
+        payload,
+        type === "instansi"
+            ? "instStatus"
+            : type + "Status"
+    );
+}
+
+async function postWebhook(type,payload,statusId){
+    const url = WEBHOOKS[type];
+
+    if(!url){
+        $(statusId).textContent =
+            "❌ Webhook belum dikonfigurasi dalam WEBHOOKS.";
+
+        return;
+    }
+
+    $(statusId).textContent = "⏳ Menghantar...";
+
+    try{
+        const response = await fetch(
+            url + "?wait=true",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify(payload)
+            }
+        );
+
+        $(statusId).textContent = response.ok
+            ? "✅ Berjaya dihantar."
+            : "❌ Gagal. Status " + response.status;
+
+    }catch(error){
+        $(statusId).textContent = "❌ " + error.message;
+    }
+}
+
+renderModChoices();
+renderModResult();
+
+buildToolUI(BUY,"buyPrices","buy");
+buildToolUI(SELL,"sellPrices","sell");
+buildToolUI(INST,"instPrices","inst");
+
+renderTools();
+
+document.querySelector(".tab-button").style.outline =
+    "2px solid #f5d0fe";
+</script>
+
+</body>
+</html>
+
+

@@ -103,7 +103,7 @@ form.addEventListener('submit',function(e){
   if(!form.reportValidity()){error.style.display='block';return}
   error.style.display='none';
   const data=new FormData(form);
-  let out='NARASI GARAGE — PERMOHONAN '+applicationType.value.toUpperCase()+'\\n'+'='.repeat(42)+'\\n\\n';
+  let out='NARASI GARAGE — PERMOHONAN '+applicationType.value.toUpperCase()+'\n'+'='.repeat(42)+'\n\n';
   for(const [key,value] of data.entries()) out+=key+':\n'+(value.trim()||'-')+'\n\n';
   preview.textContent=out;
   preview.style.display='block';

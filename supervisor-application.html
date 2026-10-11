@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Recruitment Supervisor — Narasi Garage</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0d12;--panel:#141821;--line:#293142;--text:#f3f5f8;--muted:#9ba5b5;--accent:#d8b46a;--accent2:#f0d69b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#202431 0%,var(--bg) 58%);font:15px/1.6 Inter,Segoe UI,Arial,sans-serif;color:var(--text)}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 56px}.hero{padding:28px 24px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#1b202b,#11141b);margin-bottom:18px}
+.brand{font-size:12px;letter-spacing:3px;color:var(--accent);font-weight:800;text-transform:uppercase}.hero h1{font-size:clamp(25px,5vw,38px);line-height:1.15;margin:10px 0}.hero p{color:var(--muted);margin:8px 0 0}.pill{display:inline-block;border:1px solid #65532f;color:var(--accent2);border-radius:999px;padding:4px 10px;font-size:12px;margin-top:14px}
+.card{background:rgba(20,24,33,.96);border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0}.card h2{font-size:18px;margin:0 0 5px}.sub{color:var(--muted);font-size:13px;margin:0 0 18px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{margin:0 0 18px}.field:last-child{margin-bottom:0}label{display:block;font-weight:650;margin-bottom:7px}input,textarea,select{width:100%;border:1px solid #343d4e;background:#0e1118;color:var(--text);border-radius:10px;padding:12px 13px;font:inherit;outline:none}input:focus,textarea:focus,select:focus{border-color:var(--accent)}textarea{min-height:105px;resize:vertical}small{color:var(--muted)}.qnum{color:var(--accent);font-weight:800;margin-right:7px}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:10px;padding:12px 17px;font-weight:800;font-size:14px;cursor:pointer}.primary{background:var(--accent);color:#16130c}.secondary{background:#252c39;color:var(--text);border:1px solid #3b4557}.notice{font-size:13px;color:var(--muted);margin-top:12px}.error{color:#ff9b9b;display:none;margin-top:12px}.preview{display:none;white-space:pre-wrap;overflow-wrap:anywhere;background:#0e1118;border:1px solid var(--line);border-radius:12px;padding:16px;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+@media(max-width:620px){.grid{grid-template-columns:1fr}.card{padding:17px}.hero{padding:22px 18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="brand">Narasi Garage</div>
+    <h1>Open Recruitment<br>Supervisor</h1>
+    <p>Form permohonan untuk calon Supervisor Narasi Garage. Jawab setiap pertanyaan dengan jujur dan jelas. Ini bukan ujian pilihan ganda—kami ingin mengenal cara kamu bekerja, memimpin, dan menyelesaikan masalah.</p>
+    <span class="pill">15 Pertanyaan • Jawapan terbuka</span>
+  </header>
+  <form id="applicationForm">
+    <section class="card">
+      <h2>01 — Maklumat Pemohon</h2><p class="sub">Isi maklumat asas sebelum menjawab pertanyaan.</p>
+      <div class="grid">
+        <div class="field"><label for="icname">Nama IC</label><input id="icname" name="Nama IC" required placeholder="Contoh: Rafi Akihiro"></div>
+        <div class="field"><label for="discord">Nama Discord</label><input id="discord" name="Discord" required placeholder="Contoh: rafi#0001 atau @rafi"></div>
+        <div class="field"><label for="rank">Rank/Jabatan sekarang</label><input id="rank" name="Rank sekarang" required placeholder="Contoh: Senior Mechanic"></div>
+        <div class="field"><label for="time">Tempoh berada di Narasi Garage</label><input id="time" name="Tempoh bertugas" required placeholder="Contoh: 3 minggu"></div>
+        <div class="field"><label for="hours">Waktu aktif biasa</label><input id="hours" name="Waktu aktif" required placeholder="Contoh: 20:00–00:00 WIB"></div>
+        <div class="field"><label for="experience">Pengalaman memimpin (jika ada)</label><input id="experience" name="Pengalaman memimpin" placeholder="Boleh tulis Tiada jika belum ada"></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2>02 — Pertanyaan Permohonan</h2><p class="sub">Jawab semua 15 soalan. Tiada jawapan pilihan ganda atau markah automatik.</p>
+      <div class="field"><label><span class="qnum">01.</span>Kenapa kamu ingin memohon jawatan Supervisor Narasi Garage?</label><textarea name="01 - Alasan memohon" required placeholder="Ceritakan alasan kamu..."></textarea></div>
+      <div class="field"><label><span class="qnum">02.</span>Apa yang kamu faham tentang tanggungjawab seorang Supervisor?</label><textarea name="02 - Tanggungjawab Supervisor" required></textarea></div>
+      <div class="field"><label><span class="qnum">03.</span>Apa sumbangan yang boleh kamu berikan kepada Narasi Garage jika diterima?</label><textarea name="03 - Sumbangan" required></textarea></div>
+      <div class="field"><label><span class="qnum">04.</span>Bagaimana kamu akan memastikan mekanik mengikuti SOP bengkel?</label><textarea name="04 - Penguatkuasaan SOP" required></textarea></div>
+      <div class="field"><label><span class="qnum">05.</span>Jika mekanik senior melanggar SOP, bagaimana kamu akan menanganinya?</label><textarea name="05 - Senior melanggar SOP" required></textarea></div>
+      <div class="field"><label><span class="qnum">06.</span>Jika trainee melakukan kesalahan yang sama berulang kali, apa tindakan kamu?</label><textarea name="06 - Trainee mengulangi kesalahan" required></textarea></div>
+      <div class="field"><label><span class="qnum">07.</span>Bagaimana kamu menyelesaikan konflik antara dua orang mekanik?</label><textarea name="07 - Konflik mekanik" required></textarea></div>
+      <div class="field"><label><span class="qnum">08.</span>Jika ada aduan pelanggan tentang layanan mekanik, apa langkah pertama kamu?</label><textarea name="08 - Aduan pelanggan" required></textarea></div>
+      <div class="field"><label><span class="qnum">09.</span>Bagaimana kamu memastikan akses sistem bengkel tidak disalahgunakan?</label><textarea name="09 - Penyalahgunaan akses" required></textarea></div>
+      <div class="field"><label><span class="qnum">10.</span>Jika rakan rapat kamu melakukan kesalahan, adakah kamu akan mengambil tindakan? Jelaskan.</label><textarea name="10 - Keadilan dan kawan" required></textarea></div>
+      <div class="field"><label><span class="qnum">11.</span>Bagaimana kamu membahagikan tugas apabila bengkel sedang sibuk?</label><textarea name="11 - Pembahagian tugas" required></textarea></div>
+      <div class="field"><label><span class="qnum">12.</span>Jika kamu tidak bersetuju dengan keputusan Boss atau pengurusan, bagaimana kamu akan menyampaikannya?</label><textarea name="12 - Perbezaan pendapat" required></textarea></div>
+      <div class="field"><label><span class="qnum">13.</span>Apakah kelemahan diri kamu yang mungkin memberi kesan kepada tugas Supervisor, dan bagaimana kamu mengatasinya?</label><textarea name="13 - Kelemahan diri" required></textarea></div>
+      <div class="field"><label><span class="qnum">14.</span>Berapa banyak masa yang boleh kamu komitmenkan, dan bagaimana kamu akan memaklumkan jika tidak dapat aktif?</label><textarea name="14 - Komitmen dan kehadiran" required></textarea></div>
+      <div class="field"><label><span class="qnum">15.</span>Apa satu perkara yang kamu mahu perbaiki di Narasi Garage, dan bagaimana kamu akan melaksanakannya?</label><textarea name="15 - Cadangan penambahbaikan" required></textarea></div>
+    </section>
+    <section class="card">
+      <h2>03 — Pengesahan</h2><p class="sub">Pastikan semua jawapan betul sebelum menghantar.</p>
+      <div class="field"><label for="confirm">Pengesahan pemohon</label><select id="confirm" name="Pengesahan" required><option value="">Pilih satu</option><option>Saya mengesahkan maklumat dan jawapan adalah benar.</option></select></div>
+      <div class="actions"><button class="btn primary" type="submit">Semak Permohonan</button><button class="btn secondary" type="reset">Kosongkan Borang</button></div>
+      <p class="notice">Demo awal: butang ini akan memaparkan ringkasan jawapan untuk disemak dan boleh disalin. Data belum dihantar ke Discord atau Google Sheets.</p>
+      <p class="error" id="error">Sila lengkapkan semua ruangan wajib sebelum semak permohonan.</p>
+    </section>
+  </form>
+  <section class="card" id="previewCard" style="display:none">
+    <h2>Pratonton Permohonan</h2><p class="sub">Semak ringkasan ini. Versi demo ini tidak menyimpan atau menghantar jawapan ke mana-mana server.</p>
+    <pre class="preview" id="preview"></pre>
+    <div class="actions"><button class="btn primary" id="copyBtn" type="button">Salin Jawapan</button><button class="btn secondary" id="editBtn" type="button">Kembali Edit</button></div>
+    <p class="notice" id="copyStatus" aria-live="polite"></p>
+  </section>
+  <div class="footer">NARASI GARAGE • SUPERVISOR RECRUITMENT FORM</div>
+</div>
+<script>
+const form=document.getElementById('applicationForm');
+const previewCard=document.getElementById('previewCard');
+const preview=document.getElementById('preview');
+const error=document.getElementById('error');
+form.addEventListener('submit',function(e){
+  e.preventDefault();
+  if(!form.reportValidity()){error.style.display='block';return}
+  error.style.display='none';
+  const data=new FormData(form);
+  let out='NARASI GARAGE — PERMOHONAN SUPERVISOR\n'+'='.repeat(42)+'\n\n';
+  for(const [key,value] of data.entries()) out+=key+':\n'+(value.trim()||'-')+'\n\n';
+  preview.textContent=out;
+  preview.style.display='block';
+  previewCard.style.display='block';
+  previewCard.scrollIntoView({behavior:'smooth',block:'start'});
+});
+document.getElementById('copyBtn').addEventListener('click',async()=>{
+  const status=document.getElementById('copyStatus');
+  try{await navigator.clipboard.writeText(preview.textContent);status.textContent='Jawapan berjaya disalin.'}
+  catch(e){status.textContent='Clipboard tidak tersedia. Pilih dan salin teks pratonton secara manual.'}
+});
+document.getElementById('editBtn').addEventListener('click',()=>{previewCard.style.display='none';form.scrollIntoView({behavior:'smooth',block:'start'})});
+form.addEventListener('reset',()=>{previewCard.style.display='none';error.style.display='none'});
+</script>
+</body>
+</html>

@@ -24,7 +24,7 @@
   <form id="applicationForm">
     <section class="card">
       <h2>01 — Maklumat Pemohon</h2><p class="sub">Isi maklumat asas sebelum menjawab pertanyaan.</p>
-      <div class="field"><label for="applicationType">Jenis Permohonan</label><select id="applicationType" name="Jenis Permohonan" required><option value="Petinggi">Supervisor</option><option value="Mekanik Biasa">Mekanik Biasa</option></select><small>Pilih satu sahaja. Soalan akan berubah mengikut jenis permohonan.</small></div>
+      <div class="field"><label for="applicationType">Jenis Permohonan</label><select id="applicationType" name="Jenis Permohonan" required><option value="Supervisor">Supervisor</option><option value="Mekanik">Mekanik</option></select><small>Pilih satu sahaja. Soalan akan berubah mengikut jenis permohonan.</small></div>
       <div class="grid">
         <div class="field"><label for="icname">Nama IC</label><input id="icname" name="Nama IC" required placeholder="Contoh: Rafi Akihiro"></div>
         <div class="field"><label for="discord">Nama Discord</label><input id="discord" name="Discord" required placeholder="Contoh: rafi#0001 atau @rafi"></div>
@@ -52,7 +52,7 @@
       <div class="field"><label><span class="qnum">15.</span>Apa satu perkara yang kamu mahu perbaiki di Narasi Garage, dan bagaimana kamu akan melaksanakannya?</label><textarea name="15 - Cadangan penambahbaikan" required></textarea></div>
     </section>
     <section class="card" id="mechanicQuestions" style="display:none">
-      <h2>02 — Pertanyaan Permohonan Mekanik Biasa</h2><p class="sub">Jawab soalan berikut untuk permohonan sebagai mekanik biasa.</p>
+      <h2>02 — Pertanyaan Permohonan Mekanik</h2><p class="sub">Jawab soalan berikut untuk permohonan sebagai mekanik biasa.</p>
       <div class="field"><label><span class="qnum">01.</span>Kenapa kamu ingin menyertai Narasi Garage sebagai mekanik?</label><textarea name="Mekanik 01 - Alasan memohon" placeholder="Ceritakan alasan kamu..."></textarea></div>
       <div class="field"><label><span class="qnum">02.</span>Adakah kamu mempunyai pengalaman sebagai mekanik di server RP lain? Ceritakan jika ada.</label><textarea name="Mekanik 02 - Pengalaman" placeholder="Jika tiada, ceritakan kesediaan kamu untuk belajar."></textarea></div>
       <div class="field"><label><span class="qnum">03.</span>Apakah yang kamu faham tentang tugas dan tanggungjawab mekanik?</label><textarea name="Mekanik 03 - Tanggungjawab" ></textarea></div>
@@ -89,7 +89,7 @@ const applicationType=document.getElementById('applicationType');
 const supervisorQuestions=document.getElementById('supervisorQuestions');
 const mechanicQuestions=document.getElementById('mechanicQuestions');
 function updateApplicationType(){
-  const isSupervisor=applicationType.value==='Petinggi';
+  const isSupervisor=applicationType.value==='Supervisor';
   supervisorQuestions.style.display=isSupervisor?'block':'none';
   mechanicQuestions.style.display=isSupervisor?'none':'block';
   supervisorQuestions.querySelectorAll('textarea').forEach(el=>el.required=isSupervisor);
@@ -103,7 +103,7 @@ form.addEventListener('submit',function(e){
   if(!form.reportValidity()){error.style.display='block';return}
   error.style.display='none';
   const data=new FormData(form);
-  let out='NARASI GARAGE — PERMOHONAN SUPERVISOR\n'+'='.repeat(42)+'\n\n';
+  let out='NARASI GARAGE — PERMOHONAN ${applicationType.value.toUpperCase()}\n'+'='.repeat(42)+'\n\n';
   for(const [key,value] of data.entries()) out+=key+':\n'+(value.trim()||'-')+'\n\n';
   preview.textContent=out;
   preview.style.display='block';

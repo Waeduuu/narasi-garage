@@ -24,6 +24,7 @@
   <form id="applicationForm">
     <section class="card">
       <h2>01 — Maklumat Pemohon</h2><p class="sub">Isi maklumat asas sebelum menjawab pertanyaan.</p>
+      <div class="field"><label for="applicationType">Jenis Permohonan</label><select id="applicationType" name="Jenis Permohonan" required><option value="Petinggi">Petinggi / Supervisor</option><option value="Mekanik Biasa">Mekanik Biasa</option></select><small>Pilih satu sahaja. Soalan akan berubah mengikut jenis permohonan.</small></div>
       <div class="grid">
         <div class="field"><label for="icname">Nama IC</label><input id="icname" name="Nama IC" required placeholder="Contoh: Rafi Akihiro"></div>
         <div class="field"><label for="discord">Nama Discord</label><input id="discord" name="Discord" required placeholder="Contoh: rafi#0001 atau @rafi"></div>
@@ -33,8 +34,8 @@
         <div class="field"><label for="experience">Pengalaman memimpin (jika ada)</label><input id="experience" name="Pengalaman memimpin" placeholder="Boleh tulis Tiada jika belum ada"></div>
       </div>
     </section>
-    <section class="card">
-      <h2>02 — Pertanyaan Permohonan</h2><p class="sub">Jawab semua 15 soalan. Tiada jawapan pilihan ganda atau markah automatik.</p>
+    <section class="card" id="supervisorQuestions">
+      <h2>02 — Pertanyaan Permohonan Petinggi / Supervisor</h2><p class="sub">Jawab semua 15 soalan. Tiada jawapan pilihan ganda atau markah automatik.</p>
       <div class="field"><label><span class="qnum">01.</span>Kenapa kamu ingin memohon jawatan Supervisor Narasi Garage?</label><textarea name="01 - Alasan memohon" required placeholder="Ceritakan alasan kamu..."></textarea></div>
       <div class="field"><label><span class="qnum">02.</span>Apa yang kamu faham tentang tanggungjawab seorang Supervisor?</label><textarea name="02 - Tanggungjawab Supervisor" required></textarea></div>
       <div class="field"><label><span class="qnum">03.</span>Apa sumbangan yang boleh kamu berikan kepada Narasi Garage jika diterima?</label><textarea name="03 - Sumbangan" required></textarea></div>
@@ -50,6 +51,19 @@
       <div class="field"><label><span class="qnum">13.</span>Apakah kelemahan diri kamu yang mungkin memberi kesan kepada tugas Supervisor, dan bagaimana kamu mengatasinya?</label><textarea name="13 - Kelemahan diri" required></textarea></div>
       <div class="field"><label><span class="qnum">14.</span>Berapa banyak masa yang boleh kamu komitmenkan, dan bagaimana kamu akan memaklumkan jika tidak dapat aktif?</label><textarea name="14 - Komitmen dan kehadiran" required></textarea></div>
       <div class="field"><label><span class="qnum">15.</span>Apa satu perkara yang kamu mahu perbaiki di Narasi Garage, dan bagaimana kamu akan melaksanakannya?</label><textarea name="15 - Cadangan penambahbaikan" required></textarea></div>
+    </section>
+    <section class="card" id="mechanicQuestions" style="display:none">
+      <h2>02 — Pertanyaan Permohonan Mekanik Biasa</h2><p class="sub">Jawab soalan berikut untuk permohonan sebagai mekanik biasa.</p>
+      <div class="field"><label><span class="qnum">01.</span>Kenapa kamu ingin menyertai Narasi Garage sebagai mekanik?</label><textarea name="Mekanik 01 - Alasan memohon" placeholder="Ceritakan alasan kamu..."></textarea></div>
+      <div class="field"><label><span class="qnum">02.</span>Adakah kamu mempunyai pengalaman sebagai mekanik di server RP lain? Ceritakan jika ada.</label><textarea name="Mekanik 02 - Pengalaman" placeholder="Jika tiada, ceritakan kesediaan kamu untuk belajar."></textarea></div>
+      <div class="field"><label><span class="qnum">03.</span>Apakah yang kamu faham tentang tugas dan tanggungjawab mekanik?</label><textarea name="Mekanik 03 - Tanggungjawab" ></textarea></div>
+      <div class="field"><label><span class="qnum">04.</span>Bagaimana kamu melayan pelanggan yang sedang marah atau tidak berpuas hati?</label><textarea name="Mekanik 04 - Layanan pelanggan"></textarea></div>
+      <div class="field"><label><span class="qnum">05.</span>Jika kamu tidak tahu cara melakukan sesuatu kerja, apa yang akan kamu buat?</label><textarea name="Mekanik 05 - Tidak tahu kerja"></textarea></div>
+      <div class="field"><label><span class="qnum">06.</span>Bagaimana kamu memastikan setiap kerja dilakukan mengikut SOP bengkel?</label><textarea name="Mekanik 06 - SOP"></textarea></div>
+      <div class="field"><label><span class="qnum">07.</span>Jika bengkel sedang sibuk dan beberapa pelanggan menunggu, bagaimana kamu menguruskan keadaan?</label><textarea name="Mekanik 07 - Bengkel sibuk"></textarea></div>
+      <div class="field"><label><span class="qnum">08.</span>Jika kamu melakukan kesalahan semasa bertugas, apa tindakan kamu?</label><textarea name="Mekanik 08 - Kesalahan sendiri"></textarea></div>
+      <div class="field"><label><span class="qnum">09.</span>Apakah waktu aktif kamu dan berapa lama kamu boleh komitmen untuk Narasi Garage?</label><textarea name="Mekanik 09 - Waktu aktif"></textarea></div>
+      <div class="field"><label><span class="qnum">10.</span>Apa yang kamu harapkan daripada Narasi Garage, dan apa yang kamu mahu pelajari sebagai mekanik?</label><textarea name="Mekanik 10 - Harapan dan pembelajaran"></textarea></div>
     </section>
     <section class="card">
       <h2>03 — Pengesahan</h2><p class="sub">Pastikan semua jawapan betul sebelum menghantar.</p>
@@ -72,6 +86,19 @@ const form=document.getElementById('applicationForm');
 const previewCard=document.getElementById('previewCard');
 const preview=document.getElementById('preview');
 const error=document.getElementById('error');
+const applicationType=document.getElementById('applicationType');
+const supervisorQuestions=document.getElementById('supervisorQuestions');
+const mechanicQuestions=document.getElementById('mechanicQuestions');
+function updateApplicationType(){
+  const isSupervisor=applicationType.value==='Petinggi';
+  supervisorQuestions.style.display=isSupervisor?'block':'none';
+  mechanicQuestions.style.display=isSupervisor?'none':'block';
+  supervisorQuestions.querySelectorAll('textarea').forEach(el=>el.required=isSupervisor);
+  mechanicQuestions.querySelectorAll('textarea').forEach(el=>el.required=!isSupervisor);
+  document.querySelector('#previewCard .sub').textContent='Semak ringkasan permohonan '+applicationType.value+'. Versi demo ini tidak menyimpan atau menghantar jawapan ke mana-mana server.';
+}
+applicationType.addEventListener('change',updateApplicationType);
+updateApplicationType();
 form.addEventListener('submit',function(e){
   e.preventDefault();
   if(!form.reportValidity()){error.style.display='block';return}

@@ -38,6 +38,7 @@ body:before{content:'';inset:0;position:fixed;pointer-events:none;opacity:.14;ba
 <section class="section active" id="section-calculator"><div class="section-head"><div><h2>🧮 Calculator Modifikasi</h2><p>Harga dan pengiraan asal Narasi Garage</p></div><span class="mini-pill">LOCAL / IMPORT +50%</span></div>
 <div class="panel"><h3>Data Pekerja & Pelanggan</h3><div class="fields"><div class="field"><label>Nama Mekanik</label><input id="modMechanic" placeholder="Nama mekanik"></div><div class="field"><label>Senior / Petinggi</label><input id="modSenior" placeholder="Nama senior"></div><div class="field"><label>Nama Customer</label><input id="modCustomer" placeholder="Nama customer"></div><div class="field"><label>Plat Kendaraan</label><input id="modPlate" placeholder="Plat kendaraan"></div><div class="field"><label>Jenis Layanan</label><input id="modService" readonly placeholder="Terisi otomatis"></div></div></div>
 <div class="mod-grid" id="modCategories"></div>
+<div class="panel"><h3>💵 Harga Manual</h3><div class="field"><label for="modManualPrice">Jumlah Harga LOCAL / Resi ($NR)</label><input id="modManualPrice" type="number" min="0" step="1" inputmode="numeric" placeholder="Contoh: 150000" aria-describedby="modManualHint modManualError"><div id="modManualHint" class="hint">Isi jumlah harga LOCAL daripada resi. Harga manual akan digunakan sebagai jumlah LOCAL; kosongkan untuk guna jumlah pilihan modifikasi. Tekan Mobil Import +50% untuk kira tambahan.</div><div id="modManualError" class="status" role="status"></div></div></div>
 <div class="panel calculator-photo" id="modPhotoPanel"><h3>📸 Screenshot Modifikasi — Hingga 10 Gambar</h3><p>Boleh terus hantar screenshot tanpa pilih modifikasi. Isi maklumat mekanik dan customer, masukkan gambar, kemudian tekan Kirim Discord.</p><div class="field"><label for="modPhotoMode">Mode Screenshot</label><select id="modPhotoMode"><option value="optional">Optional — boleh hantar tanpa screenshot</option><option value="required">Wajib — screenshot mesti dimasukkan sebelum hantar</option></select><div class="hint" id="modPhotoHint">Screenshot optional. Jika dimasukkan, gambar dihantar bersama laporan Discord.</div></div><div class="field"><label>Screenshot <span id="modPhotoRequired"></span></label><div tabindex="0" class="upload" data-upload="modifikasi" aria-label="Upload screenshot modifikasi"><strong>📸 Klik / Ctrl + V / Drag &amp; Drop</strong><span>PNG, JPG, WEBP, GIF · Maksimum 10 gambar · 8MB setiap gambar</span><button type="button" class="btn sm red remove-photo" hidden>Hapus Semua Gambar</button></div><input class="file-input" type="file" multiple hidden accept="image/png,image/jpeg,image/webp,image/gif"><div id="modPhotoCount" class="hint" aria-live="polite">0 / 10 gambar dipilih</div><div id="modPhotoGallery" class="mod-photo-gallery"></div></div></div>
 <div class="panel" style="margin-top:18px"><h3>Daftar Pilihan Modifikasi</h3><div id="modSelected" class="sub">Belum ada modifikasi.</div><div style="margin-top:12px" class="field"><label>Detail Modifikasi</label><textarea id="modResult" readonly style="min-height:155px"></textarea></div><div class="actions"><div style="margin-right:auto"><span id="modCount" class="sub">0 item dipilih</span><div class="mod-price-label">HARGA LOCAL</div><div id="modTotal" class="total">$NR 0</div><div id="modGrand" class="mod-import-total" aria-live="polite"></div></div><button class="btn silver" id="importBtn" type="button">🚗 Mobil Import +50%</button><button class="btn" id="sendMod" type="button">💬 Kirim Discord</button><button class="btn red" id="resetMod" type="button">🔄 Reset Modif</button></div><div id="modStatus" class="status" role="status"></div></div></section>
 <section class="section" id="section-recap"><div class="section-head"><div><h2>📊 Data Recap — Beli / Jual / Instansi</h2><p>Rekod alat dan dashboard bengkel</p></div><span class="mini-pill">DATA ALAT</span></div>
@@ -75,7 +76,8 @@ function renderModCategories(){
   modItems.push({category,name:op.dataset.name,price:Number(op.value)});renderMod();
  }));
 }
-function modTotals(){const base=modItems.reduce((s,i)=>s+i.price,0),fee=importActive?Math.round(base*.5):0;return{base,fee,grand:base+fee}}
+function readManualPrice(){const input=$('modManualPrice'),raw=input.value.trim(),badInput=!!input.validity?.badInput,active=raw!==''||badInput,value=Number(raw);return{active,value,valid:!active||(!badInput&&Number.isSafeInteger(value)&&value>=0&&value<=Math.floor(Number.MAX_SAFE_INTEGER/1.5))}}
+function modTotals(){const manual=readManualPrice(),base=manual.active?(manual.valid?manual.value:0):modItems.reduce((s,i)=>s+i.price,0),fee=importActive?Math.round(base*.5):0;return{base,fee,grand:base+fee}}
 function renderMod(){
  const groups={};modItems.forEach((item,index)=>(groups[item.category]??=[]).push({...item,index}));const out=[];let listing='';
  for(const [category,items] of Object.entries(groups)){
@@ -83,25 +85,28 @@ function renderMod(){
   for(const x of items){out.push('- '+x.name+' - $NR '+money(x.price));if(importActive)out.push('  ↳ IMPORT (+50%): $NR '+money(Math.round(x.price*1.5)));listing+=`<div class="selected-line"><div class="mod-price-details"><div class="mod-item-name">• ${esc(x.name)}</div><div class="mod-local-price">LOCAL: $NR ${money(x.price)}</div>${importActive?`<div class="mod-import-price">IMPORT (+50%): $NR ${money(Math.round(x.price*1.5))}</div>`:''}</div><button type="button" class="btn red sm" data-remove="${x.index}">Hapus</button></div>`}
   out.push('');listing+='</div>';
  }
- const t=modTotals();out.push(`🚗 MOBIL IMPORT: ${importActive?'YA (+50%)':'TIDAK'}`,`HARGA LOCAL: $NR ${money(t.base)}`);if(importActive)out.push(`TAMBAHAN IMPORT (+50%): $NR ${money(t.fee)}`,`HARGA IMPORT: $NR ${money(t.grand)}`);
+ const manual=readManualPrice();$('modManualError').textContent=manual.valid?'':'❌ Masukkan harga nombor bulat yang sah, 0 atau lebih.';$('modManualError').className='status '+(manual.valid?'':'error');
+ const t=modTotals();if(manual.active&&manual.valid)out.push('SUMBER HARGA: MANUAL');out.push(`🚗 MOBIL IMPORT: ${importActive?'YA (+50%)':'TIDAK'}`,`HARGA LOCAL: $NR ${money(t.base)}`);if(importActive)out.push(`TAMBAHAN IMPORT (+50%): $NR ${money(t.fee)}`,`HARGA IMPORT: $NR ${money(t.grand)}`);
  $('modSelected').innerHTML=listing||'<span class="sub">Belum ada modifikasi.</span>';
  $('modSelected').querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{modItems.splice(Number(b.dataset.remove),1);renderMod()}));
- $('modResult').value=out.join('\n');$('modCount').textContent=modItems.length+' item dipilih';$('modTotal').textContent='$NR '+money(t.base);$('modGrand').innerHTML=importActive?`<div class="mod-import-fee">Tambahan IMPORT (+50%): <b>$NR ${money(t.fee)}</b></div><div class="mod-import-label">HARGA IMPORT (+50%)</div><div class="mod-import-amount">$NR ${money(t.grand)}</div>`:'';
- $('modService').value=[...new Set(modItems.map(x=>x.category))].join(', ');
+ $('modResult').value=out.join('\n');$('modCount').textContent=modItems.length+' item dipilih';$('modTotal').textContent=manual.valid?'$NR '+money(t.base):'—';$('modGrand').innerHTML=importActive&&manual.valid?`<div class="mod-import-fee">Tambahan IMPORT (+50%): <b>$NR ${money(t.fee)}</b></div><div class="mod-import-label">HARGA IMPORT (+50%)</div><div class="mod-import-amount">$NR ${money(t.grand)}</div>`:'';
+ $('modService').value=[...new Set(modItems.map(x=>x.category))].join(', ')||(manual.active?'HARGA MANUAL':'');
  $('importBtn').textContent=importActive?'🚗 Mobil Import Aktif ✓':'🚗 Mobil Import +50%';
 }
+$('modManualPrice').addEventListener('input',()=>{renderMod();setStatus('modStatus','')});
 $('importBtn').addEventListener('click',()=>{importActive=!importActive;renderMod()});
-$('resetMod').addEventListener('click',()=>{if(!confirm('Yakin mahu reset kalkulator modif?'))return;modItems=[];importActive=false;['modMechanic','modSenior','modCustomer','modPlate','modService'].forEach(id=>$(id).value='');renderMod();photoReady($('modPhotoPanel'),null);setStatus('modStatus','')});
+$('resetMod').addEventListener('click',()=>{if(!confirm('Yakin mahu reset kalkulator modif?'))return;modItems=[];importActive=false;['modMechanic','modSenior','modCustomer','modPlate','modService','modManualPrice'].forEach(id=>$(id).value='');renderMod();photoReady($('modPhotoPanel'),null);setStatus('modStatus','')});
 async function postWebhook(type,payload,statusId,attachments=[]){const url=WEBHOOKS[type];if(!url){setStatus(statusId,'❌ Webhook belum dikonfigurasi.','error');return false}setStatus(statusId,'⏳ Menghantar...','warn');try{let options;if(attachments.length){const data=new FormData();data.append('payload_json',JSON.stringify(payload));attachments.forEach(({file,filename},index)=>data.append('files['+index+']',file,filename));options={method:'POST',body:data}}else options={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)};const response=await fetch(url+'?wait=true',options);setStatus(statusId,response.ok?'✅ Berjaya dihantar.':'❌ Gagal. Status '+response.status,response.ok?'ok':'error');return response.ok}catch(e){setStatus(statusId,'❌ '+e.message,'error');return false}}
 $('sendMod').addEventListener('click',async()=>{
- const photos=modPhotos.map(x=>x.file),hasMods=modItems.length>0;
- if(!hasMods&&!photos.length){setStatus('modStatus','❌ Masukkan screenshot atau tambah modifikasi sebelum hantar.','error');$('modPhotoPanel').querySelector('.upload').focus();return}
+ const photos=modPhotos.map(x=>x.file),hasMods=modItems.length>0,manual=readManualPrice(),hasPrice=hasMods||manual.active;
+ if(!manual.valid){setStatus('modStatus','❌ Harga manual mesti nombor bulat yang sah, 0 atau lebih.','error');$('modManualPrice').focus();return}
+ if(!hasPrice&&!photos.length){setStatus('modStatus','❌ Masukkan screenshot, harga manual atau tambah modifikasi sebelum hantar.','error');$('modPhotoPanel').querySelector('.upload').focus();return}
  if($('modPhotoMode').value==='required'&&!photos.length){setStatus('modStatus','❌ Screenshot wajib dimasukkan sebelum hantar.','error');$('modPhotoPanel').querySelector('.upload').focus();return}
  const t=modTotals(),services=[...new Set(modItems.map(x=>x.category))].join(', ')||'-';
  const details=modItems.map(x=>'• '+x.name+' — $NR '+money(x.price)).join('\n').slice(0,1000)||'-';
  const payload={username:'Narasi Garage Calculator',allowed_mentions:{parse:[]},embeds:[{
- title:hasMods?'🚗 NARASI GARAGE | MODIFIKASI':'📸 NARASI GARAGE | BUKTI MODIFIKASI',
- description:hasMods?'**LAPORAN MODIFIKASI KENDARAAN**\nInformasi mekanik, pelanggan, dan rincian biaya.':'**LAPORAN SCREENSHOT MODIFIKASI**\nRincian modifikasi dan harga mengikut screenshot yang dilampirkan.',
+ title:hasPrice?'🚗 NARASI GARAGE | MODIFIKASI':'📸 NARASI GARAGE | BUKTI MODIFIKASI',
+ description:hasPrice?'**LAPORAN MODIFIKASI KENDARAAN**\nInformasi mekanik, pelanggan, dan rincian biaya.':'**LAPORAN SCREENSHOT MODIFIKASI**\nRincian modifikasi dan harga mengikut screenshot yang dilampirkan.',
  color:0x4389F8,
  fields:[
  {name:'👨‍🔧 MEKANIK',value:safeText($('modMechanic').value||'-'),inline:true},
@@ -109,9 +114,10 @@ $('sendMod').addEventListener('click',async()=>{
  {name:'👤 CUSTOMER',value:safeText($('modCustomer').value||'-'),inline:true},
  {name:'🚘 PLAT KENDARAAN',value:safeText($('modPlate').value||'-'),inline:true},
  {name:'🌍 KATEGORI',value:importActive?'IMPORT (+50%)':'LOCAL',inline:true},
- {name:'🛠️ JENIS LAYANAN',value:hasMods?safeText(services):'BUKTI SCREENSHOT',inline:true},
- ...(hasMods?[{name:'📋 DETAIL MODIFIKASI',value:safeText(details),inline:false},
- {name:'💵 HARGA LOCAL',value:'$NR '+money(t.base),inline:true},
+ {name:'🛠️ JENIS LAYANAN',value:hasMods?safeText(services):manual.active?'HARGA MANUAL':'BUKTI SCREENSHOT',inline:true},
+ ...(manual.active?[{name:'🧾 SUMBER HARGA',value:'HARGA LOCAL MANUAL / RESI',inline:true}]:[]),
+ ...(hasMods?[{name:'📋 DETAIL MODIFIKASI',value:safeText(details),inline:false}]:[]),
+ ...(hasPrice?[{name:'💵 HARGA LOCAL',value:'$NR '+money(t.base),inline:true},
  {name:'💸 BIAYA IMPORT (+50%)',value:'$NR '+money(t.fee),inline:true},
  {name:'💰 GRAND TOTAL',value:'**$NR '+money(t.grand)+'**',inline:false}]:[])
  ],footer:{text:'NARASI GARAGE • MODIFICATION LOG'},timestamp:new Date().toISOString()}]};

@@ -37,6 +37,7 @@ body:before{content:'';inset:0;position:fixed;pointer-events:none;opacity:.14;ba
 <section class="section active" id="section-calculator"><div class="section-head"><div><h2>🧮 Calculator Modifikasi</h2><p>Harga dan pengiraan asal Narasi Garage</p></div><span class="mini-pill">LOCAL / IMPORT +50%</span></div>
 <div class="panel"><h3>Data Pekerja & Pelanggan</h3><div class="fields"><div class="field"><label>Nama Mekanik</label><input id="modMechanic" placeholder="Nama mekanik"></div><div class="field"><label>Senior / Petinggi</label><input id="modSenior" placeholder="Nama senior"></div><div class="field"><label>Nama Customer</label><input id="modCustomer" placeholder="Nama customer"></div><div class="field"><label>Plat Kendaraan</label><input id="modPlate" placeholder="Plat kendaraan"></div><div class="field"><label>Jenis Layanan</label><input id="modService" readonly placeholder="Terisi otomatis"></div></div></div>
 <div class="mod-grid" id="modCategories"></div>
+<div class="panel calculator-photo" id="modPhotoPanel"><h3>📸 Screenshot Modifikasi</h3><div class="field"><label for="modPhotoMode">Mode Screenshot</label><select id="modPhotoMode"><option value="optional">Optional — boleh hantar tanpa screenshot</option><option value="required">Wajib — screenshot mesti dimasukkan sebelum hantar</option></select><div class="hint" id="modPhotoHint">Screenshot optional. Jika dimasukkan, gambar dihantar bersama laporan Discord.</div></div><div class="field"><label>Screenshot <span id="modPhotoRequired"></span></label><div tabindex="0" class="upload" data-upload="modifikasi" aria-label="Upload screenshot modifikasi"><strong>📸 Klik / Ctrl + V / Drag &amp; Drop</strong><span>PNG, JPG, WEBP, GIF · Maksimum 8MB</span><img alt="Preview screenshot modifikasi" hidden><button type="button" class="btn sm red remove-photo" hidden>Hapus Screenshot</button></div><input class="file-input" type="file" hidden accept="image/png,image/jpeg,image/webp,image/gif"></div></div>
 <div class="panel" style="margin-top:18px"><h3>Daftar Pilihan Modifikasi</h3><div id="modSelected" class="sub">Belum ada modifikasi.</div><div style="margin-top:12px" class="field"><label>Detail Modifikasi</label><textarea id="modResult" readonly style="min-height:155px"></textarea></div><div class="actions"><div style="margin-right:auto"><span id="modCount" class="sub">0 item dipilih</span><div class="mod-price-label">HARGA LOCAL</div><div id="modTotal" class="total">$NR 0</div><div id="modGrand" class="mod-import-total" aria-live="polite"></div></div><button class="btn silver" id="importBtn" type="button">🚗 Mobil Import +50%</button><button class="btn" id="sendMod" type="button">💬 Kirim Discord</button><button class="btn red" id="resetMod" type="button">🔄 Reset Modif</button></div><div id="modStatus" class="status" role="status"></div></div></section>
 <section class="section" id="section-recap"><div class="section-head"><div><h2>📊 Data Recap — Beli / Jual / Instansi</h2><p>Rekod alat dan dashboard bengkel</p></div><span class="mini-pill">DATA ALAT</span></div>
 <div class="grid2" id="recapCards"></div><div class="panel"><h3>📈 Dashboard</h3><div class="stat-grid" id="statistics"></div></div><div class="panel"><div class="section-head"><div><h3 style="margin:0">📋 Rekod Transaksi</h3><p>Penyimpanan data lokal di browser</p></div><button class="btn red sm" id="resetTx">Reset Semua</button></div><div class="field"><label>Cari Transaksi</label><input type="search" id="searchTx" class="filter" placeholder="Cari pekerja, warga, instansi atau barang..."></div><div id="txRecords"></div></div></section>
@@ -89,10 +90,12 @@ function renderMod(){
  $('importBtn').textContent=importActive?'🚗 Mobil Import Aktif ✓':'🚗 Mobil Import +50%';
 }
 $('importBtn').addEventListener('click',()=>{importActive=!importActive;renderMod()});
-$('resetMod').addEventListener('click',()=>{if(!confirm('Yakin mahu reset kalkulator modif?'))return;modItems=[];importActive=false;['modMechanic','modSenior','modCustomer','modPlate','modService'].forEach(id=>$(id).value='');renderMod();setStatus('modStatus','')});
-async function postWebhook(type,payload,statusId){const url=WEBHOOKS[type];if(!url){setStatus(statusId,'❌ Webhook belum dikonfigurasi.','error');return}setStatus(statusId,'⏳ Menghantar...','warn');try{const response=await fetch(url+'?wait=true',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});setStatus(statusId,response.ok?'✅ Berjaya dihantar.':'❌ Gagal. Status '+response.status,response.ok?'ok':'error')}catch(e){setStatus(statusId,'❌ '+e.message,'error')}}
+$('resetMod').addEventListener('click',()=>{if(!confirm('Yakin mahu reset kalkulator modif?'))return;modItems=[];importActive=false;['modMechanic','modSenior','modCustomer','modPlate','modService'].forEach(id=>$(id).value='');renderMod();photoReady($('modPhotoPanel'),null);setStatus('modStatus','')});
+async function postWebhook(type,payload,statusId,file=null,filename=''){const url=WEBHOOKS[type];if(!url){setStatus(statusId,'❌ Webhook belum dikonfigurasi.','error');return false}setStatus(statusId,'⏳ Menghantar...','warn');try{let options;if(file){const data=new FormData();data.append('payload_json',JSON.stringify(payload));data.append('files[0]',file,filename);options={method:'POST',body:data}}else options={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)};const response=await fetch(url+'?wait=true',options);setStatus(statusId,response.ok?'✅ Berjaya dihantar.':'❌ Gagal. Status '+response.status,response.ok?'ok':'error');return response.ok}catch(e){setStatus(statusId,'❌ '+e.message,'error');return false}}
 $('sendMod').addEventListener('click',async()=>{
  if(!modItems.length){alert('Pilih modifikasi dahulu.');return}
+ const file=photoMap.get($('modPhotoPanel'))||null;
+ if($('modPhotoMode').value==='required'&&!file){setStatus('modStatus','❌ Screenshot wajib dimasukkan sebelum hantar.','error');$('modPhotoPanel').querySelector('.upload').focus();return}
  const t=modTotals(),services=[...new Set(modItems.map(x=>x.category))].join(', ')||'-';
  const details=modItems.map(x=>'• '+x.name+' — $NR '+money(x.price)).join('\n').slice(0,1000)||'-';
  const payload={username:'Narasi Garage Calculator',allowed_mentions:{parse:[]},embeds:[{
@@ -111,7 +114,8 @@ $('sendMod').addEventListener('click',async()=>{
  {name:'💸 BIAYA IMPORT (+50%)',value:'$NR '+money(t.fee),inline:true},
  {name:'💰 GRAND TOTAL',value:'**$NR '+money(t.grand)+'**',inline:false}
  ],footer:{text:'NARASI GARAGE • MODIFICATION LOG'},timestamp:new Date().toISOString()}]};
- await postWebhook('mod',payload,'modStatus');
+ let filename='';if(file){filename='narasi-modifikasi-'+Date.now()+'.'+(file.type==='image/jpeg'?'jpg':file.type.split('/')[1]);payload.embeds[0].image={url:'attachment://'+filename};payload.attachments=[{id:0,filename}]}
+ const btn=$('sendMod');if(btn.disabled)return;btn.disabled=true;try{await postWebhook('mod',payload,'modStatus',file,filename)}finally{btn.disabled=false}
 });
 const kinds=[{type:'buy',title:'🛒 Beli Alat',worker:'Nama Pekerja',button:'➕ Tambah Pembelian',send:'💬 Kirim Data Beli',prices:BUY},{type:'sell',title:'💰 Jual Alat',worker:'Nama Pekerja',button:'➕ Tambah Penjualan',send:'💬 Kirim Data Jual',prices:SELL},{type:'instansi',title:'🏢 Pembelian Instansi — NO LIMIT',worker:'Nama Pekerja',button:'➕ Tambah Transaksi',send:'💬 Kirim Data Instansi',prices:INST}];
 function renderRecapForms(){
@@ -160,11 +164,13 @@ async function sendLatest(type){
 }
 // Screenshot control. Clipboard paste works only when browser has clipboard permission and focus.
 const photoMap=new WeakMap(),urls=new WeakMap();let lastPhotoArea=null;
-function photoReady(form,file){const box=form.querySelector('.upload'),pic=box.querySelector('img'),remove=box.querySelector('.remove-photo'),old=urls.get(form);if(old)URL.revokeObjectURL(old);urls.delete(form);
+function photoReady(form,file){if(file&&(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type)||file.size>8*1024*1024)){alert('Screenshot mesti PNG, JPG, WEBP atau GIF, maksimum 8MB.');return false}const box=form.querySelector('.upload'),pic=box.querySelector('img'),remove=box.querySelector('.remove-photo'),old=urls.get(form);if(old)URL.revokeObjectURL(old);urls.delete(form);
  if(!file){photoMap.delete(form);pic.hidden=true;pic.removeAttribute('src');remove.hidden=true;box.querySelector('span').textContent='PNG, JPG, WEBP, GIF · Maksimum 8MB';return true}
- if(!['image/png','image/jpeg','image/webp','image/gif'].includes(file.type)||file.size>8*1024*1024){alert('Screenshot mesti PNG, JPG, WEBP atau GIF, maksimum 8MB.');return false}
  photoMap.set(form,file);const url=URL.createObjectURL(file);urls.set(form,url);pic.src=url;pic.hidden=false;remove.hidden=false;box.querySelector('span').textContent=file.name||'Screenshot dipilih';return true}
-for(const form of document.querySelectorAll('.data-form')){const box=form.querySelector('.upload'),inp=form.querySelector('.file-input');
+function renderModPhotoMode(){const required=$('modPhotoMode').value==='required';$('modPhotoRequired').textContent=required?'* (Wajib)':'(Optional)';$('modPhotoHint').textContent=required?'Screenshot wajib dimasukkan sebelum laporan dihantar ke Discord.':'Screenshot optional. Jika dimasukkan, gambar dihantar bersama laporan Discord.'}
+try{if(localStorage.getItem('narasi-mod-screenshot-mode-v1')==='required')$('modPhotoMode').value='required'}catch(e){}
+$('modPhotoMode').addEventListener('change',()=>{renderModPhotoMode();setStatus('modStatus','');try{localStorage.setItem('narasi-mod-screenshot-mode-v1',$('modPhotoMode').value)}catch(e){}});renderModPhotoMode();
+for(const form of document.querySelectorAll('.data-form, .calculator-photo')){const box=form.querySelector('.upload'),inp=form.querySelector('.file-input');
  box.addEventListener('click',e=>{if(e.target.closest('.remove-photo'))return;lastPhotoArea=form;inp.click()});box.addEventListener('focus',()=>lastPhotoArea=form);
  box.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();lastPhotoArea=form;inp.click()}});
  inp.addEventListener('change',()=>{if(inp.files?.[0])photoReady(form,inp.files[0]);inp.value='' });
@@ -172,6 +178,7 @@ for(const form of document.querySelectorAll('.data-form')){const box=form.queryS
  box.addEventListener('dragover',e=>{e.preventDefault();box.classList.add('drag');lastPhotoArea=form});box.addEventListener('dragleave',()=>box.classList.remove('drag'));
  box.addEventListener('drop',e=>{e.preventDefault();box.classList.remove('drag');lastPhotoArea=form;if(e.dataTransfer.files?.[0])photoReady(form,e.dataTransfer.files[0])});
  form.addEventListener('focusin',()=>lastPhotoArea=form);
+ if(form.classList.contains('calculator-photo'))continue;
  form.addEventListener('submit',async e=>{e.preventDefault();const status=form.querySelector('.status'),values=Object.fromEntries(new FormData(form)),staff=String(values.staff||'').trim(),item=String(values.item||'').trim(),note=String(values.note||'').trim(),quantity=values.quantity?Number(values.quantity):null;
  if(!staff||!item){status.className='status error';status.textContent='Isi nama staff dan barang terlebih dahulu.';return}
  if(quantity!==null&&(!Number.isSafeInteger(quantity)||quantity<1||quantity>999999)){status.className='status error';status.textContent='Quantity mesti nombor bulat antara 1 dan 999999.';return}
@@ -196,7 +203,7 @@ for(const form of document.querySelectorAll('.data-form')){const box=form.queryS
  }catch(e){status.className='status error';status.textContent='❌ Gagal mengirim permintaan: '+e.message}finally{btn.disabled=false}
  });
 }
-document.addEventListener('paste',e=>{const f=lastPhotoArea;if(!f||!document.getElementById('section-data').classList.contains('active'))return;
+document.addEventListener('paste',e=>{const f=lastPhotoArea;if(!f||!f.closest('.section')?.classList.contains('active'))return;
  for(const it of [...(e.clipboardData?.items||[])]){if(it.kind==='file'&&it.type.startsWith('image/')){const file=it.getAsFile();if(file){e.preventDefault();photoReady(f,file)}break}}
 });
 function renderDataHistory(){$('dataHistory').innerHTML=dataHistory.length?dataHistory.map(x=>`<div class="history-line"><div><b>${esc(x.item)}${x.quantity?' × '+esc(x.quantity):''}</b><div class="record-info"><small>Staff: ${esc(x.staff)}${x.note?'\nNotes: '+esc(x.note):''}\n${esc(x.timestamp)} · ${esc(x.id)}\nDelivery: Unverified</small></div></div><span class="history-type ${x.action==='withdraw'?'withdraw':''}">${x.action==='withdraw'?'WITHDRAW':'DEPOSIT'}</span></div>`).join(''):'<p class="sub" style="text-align:center;padding:15px">No submission attempts yet.</p>'}

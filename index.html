@@ -54,16 +54,16 @@ body:before{content:'';inset:0;position:fixed;pointer-events:none;opacity:.14;ba
 <form class="panel data-form" data-action="withdraw"><h3>📤 WITHDRAW — BARANG KELUAR</h3><div class="field"><label>Staff / IC Name *</label><input name="staff" required maxlength="150" placeholder="Nama IC pekerja"></div><div class="fields"><div class="field"><label>Item / Description *</label><input name="item" required maxlength="200" placeholder="Nama barang"></div><div class="field"><label>Quantity</label><input type="number" name="quantity" min="1" max="999999" step="1" placeholder="Optional"></div></div><div class="field"><label>Notes / Details</label><textarea name="note" placeholder="Alasan mengambil barang..."></textarea></div><div class="field"><label>Screenshot (Optional)</label><div tabindex="0" class="upload" data-upload="withdraw"><strong>📸 Klik / Ctrl + V / Drag & Drop</strong><span>PNG, JPG, WEBP, GIF · Maksimum 8MB</span><img alt="Preview" hidden><button type="button" class="btn sm red remove-photo" hidden>Hapus Screenshot</button></div><input class="file-input" type="file" hidden accept="image/png,image/jpeg,image/webp,image/gif"></div><button class="btn red" type="submit" style="width:100%">📤 Send Withdraw to Discord</button><div class="status" role="status"></div></form></div>
 <div class="panel"><div class="section-head"><div><h3 style="margin:0">🕘 Recent Submissions</h3><p>Percubaan penghantaran lokal; perlu semak Discord untuk pengesahan.</p></div><button class="btn sm silver" id="clearHistory">Clear History</button></div><div id="dataHistory" class="history-list"></div></div></section>
 <section class="section" id="section-leave" role="tabpanel" aria-labelledby="tab-leave">
-<div class="section-head"><div><h2>📝 Surat Izin Cuti</h2><p>Isi data izin cuti dan salin surat untuk dikirim.</p></div><span class="mini-pill">IZIN CUTI</span></div>
+<div class="section-head"><div><h2>📝 Surat Izin Cuti</h2><p>Isi data izin cuti, lalu tekan Kirim Discord untuk mengirim ke channel izin cuti.</p></div><span class="mini-pill">IZIN CUTI</span></div>
 <div class="grid2">
 <form class="panel" id="leaveForm"><h3>Data Izin Cuti</h3>
 <div class="field"><label for="leaveName">NAMA *</label><input id="leaveName" name="nama" required maxlength="150" placeholder="Nama IC pekerja"></div>
 <div class="field"><label for="leaveReasonIC">ALASAN IC *</label><textarea id="leaveReasonIC" name="alasanIC" required maxlength="1000" placeholder="Alasan izin cuti secara IC"></textarea></div>
 <div class="field"><label for="leaveReasonOC">ALASAN OC *</label><textarea id="leaveReasonOC" name="alasanOC" required maxlength="1000" placeholder="Alasan izin cuti secara OC"></textarea></div>
 <div class="field"><label for="leaveDuration">DURASI *</label><input id="leaveDuration" name="durasi" required maxlength="150" placeholder="Contoh: 3 hari (26–28 Oktober 2026)"></div>
-<div class="actions"><button class="btn" id="copyLeave" type="submit">📋 Salin Surat</button><button class="btn silver" type="reset">🔄 Reset</button></div>
+<div class="actions"><button class="btn" id="sendLeave" type="submit">💬 Kirim Discord</button><button class="btn silver" id="copyLeave" type="button">📋 Salin Surat</button><button class="btn silver" type="reset">🔄 Reset</button></div>
 <div id="leaveStatus" class="status" role="status" aria-live="polite"></div></form>
-<div class="panel"><h3>Pratinjau Surat</h3><div class="field"><label for="leavePreview">FORMAT SURAT IZIN CUTI</label><textarea id="leavePreview" readonly spellcheck="false"></textarea></div><p>Salin surat setelah semua kolom diisi.</p></div>
+<div class="panel"><h3>Pratinjau Surat</h3><div class="field"><label for="leavePreview">FORMAT SURAT IZIN CUTI</label><textarea id="leavePreview" readonly spellcheck="false"></textarea></div><p>Kirim Discord mengirim surat ke channel izin cuti. Salin Surat hanya menyalin teks.</p></div>
 </div></section>
 <footer class="foot">NARASI GARAGE • ALL-IN-ONE MANAGEMENT SYSTEM<br>Calculator / Data Recap / Withdraw & Deposit / Surat Izin Cuti • Absensi tidak termasuk</footer></main>
 <script>
@@ -264,6 +264,8 @@ renderModCategories();renderMod();renderRecapForms();renderDashboard();renderDat
 (()=>{
 'use strict';
 const byId=id=>document.getElementById(id);
+const LEAVE_WEBHOOK="https://canary.discord.com/api/webhooks/1563811045615607890/pAc87KkIylEVy_Osj1r4bGnhIYRfkoClUu-I_y6YZ9iUQMwu3zwI6umR6a4gPO-9aMBz";
+let sendingLeave=false,lastSentLetter='';
 const leaveFields=[['NAMA','leaveName'],['ALASAN IC','leaveReasonIC'],['ALASAN OC','leaveReasonOC'],['DURASI','leaveDuration']];
 function buildLeaveLetter(){
  return leaveFields.map(([label,id])=>{
@@ -274,7 +276,7 @@ function buildLeaveLetter(){
 function renderLeaveLetter(){byId('leavePreview').value=buildLeaveLetter()}
 const form=byId('leaveForm'),status=byId('leaveStatus'),button=byId('copyLeave');
 form.addEventListener('input',()=>{renderLeaveLetter();status.textContent='';status.className='status'});
-form.addEventListener('submit',async event=>{
+byId('copyLeave').addEventListener('click',async event=>{
  event.preventDefault();
  for(const [,id] of leaveFields){const field=byId(id);field.setCustomValidity(field.value.trim()?'':'Kolom ini wajib diisi.')}
  if(!form.reportValidity())return;
@@ -294,8 +296,48 @@ form.addEventListener('submit',async event=>{
   status.textContent=copied?'✅ Surat izin cuti berhasil disalin.':'Pilih dan salin teks pada Pratinjau Surat secara manual.';
  }finally{button.disabled=false}
 });
+
+function validateLeaveForm(){
+ for(const [,id] of leaveFields){const field=byId(id);field.setCustomValidity(field.value.trim()?'':'Kolom ini wajib diisi.')}
+ return form.reportValidity();
+}
+form.addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(sendingLeave||!validateLeaveForm())return;
+ renderLeaveLetter();
+ const letter=byId('leavePreview').value;
+ if(letter===lastSentLetter){status.className='status warn';status.textContent='Surat ini sudah terkirim. Ubah data untuk mengirim surat baru.';return}
+ const payload={username:'Narasi Garage Izin Cuti',allowed_mentions:{parse:[]},embeds:[{
+  title:'📝 NARASI GARAGE | SURAT IZIN CUTI',color:0x55c6d2,
+  fields:leaveFields.map(([name,id])=>({name,value:byId(id).value.trim(),inline:false})),
+  footer:{text:'NARASI GARAGE • IZIN CUTI'},timestamp:new Date().toISOString()
+ }]};
+ const sendButton=byId('sendLeave'),resetButton=form.querySelector('[type="reset"]');
+ sendingLeave=true;sendButton.disabled=true;button.disabled=true;resetButton.disabled=true;
+ leaveFields.forEach(([,id])=>byId(id).disabled=true);
+ sendButton.textContent='⏳ Mengirim...';status.className='status';status.textContent='Mengirim surat izin cuti ke Discord...';
+ try{
+  const body=new FormData();body.append('payload_json',JSON.stringify(payload));
+  const response=await fetch(LEAVE_WEBHOOK+'?wait=true',{method:'POST',mode:'cors',body});
+  if(!response.ok){
+   status.className='status error';
+   status.textContent=response.status===429?'Terlalu banyak permintaan. Tunggu sebentar sebelum mencoba lagi.':'Discord menolak pengiriman (HTTP '+response.status+'). Data surat tetap tersimpan di formulir.';
+   return;
+  }
+  const message=await response.json();
+  if(!message||!message.id)throw new Error('Konfirmasi Discord tidak tersedia');
+  lastSentLetter=letter;status.className='status ok';status.textContent='✅ Surat izin cuti berhasil masuk ke Discord.';
+ }catch(error){
+  status.className='status warn';status.textContent='Pengiriman belum dapat dipastikan. Periksa channel Discord sebelum mencoba lagi; data surat tetap ada.';
+ }finally{
+  sendingLeave=false;sendButton.disabled=false;button.disabled=false;resetButton.disabled=false;
+  leaveFields.forEach(([,id])=>byId(id).disabled=false);sendButton.textContent='💬 Kirim Discord';
+ }
+});
+
 for(const [,id] of leaveFields)byId(id).addEventListener('input',()=>byId(id).setCustomValidity(''));
 form.addEventListener('reset',()=>{
+ lastSentLetter='';
  for(const [,id] of leaveFields)byId(id).setCustomValidity('');
  setTimeout(()=>{renderLeaveLetter();status.textContent='';status.className='status'},0);
 });

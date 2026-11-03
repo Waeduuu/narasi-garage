@@ -37,7 +37,7 @@ async function startReimbursement() {
     $('rmbRemovePhoto').disabled = busy || validatingImage;
     $('rmbRetryDiscord').disabled = busy || discordBusy;
     form.querySelectorAll('input:not([type="file"]),select,textarea').forEach(field => { field.disabled = busy; });
-    $('rmbTableBody').querySelectorAll('[data-rmb-action="edit"],[data-rmb-action="delete"]').forEach(button => { button.disabled = busy || validatingImage; });
+    $('rmbTableBody')?.querySelectorAll('[data-rmb-action="edit"],[data-rmb-action="delete"]').forEach(button => { button.disabled = busy || validatingImage; });
     saveButton.textContent = busy ? '⏳ MENYIMPAN...' : editing ? '💾 SIMPAN PERUBAHAN' : '💾 SIMPAN REIMBURSEMENT';
     upload.setAttribute('aria-busy', String(validatingImage));
   }
@@ -194,6 +194,7 @@ async function startReimbursement() {
   $('rmbReset').addEventListener('click', () => { if (!busy) { resetForm(); status(''); } });
 
   function renderRecords() {
+    if (!$('rmbTableBody')) return;
     const filter = { query: $('rmbSearch').value, status: $('rmbFilterStatus').value, from: $('rmbFrom').value, to: $('rmbTo').value };
     const invalidRange = filter.from && filter.to && filter.from > filter.to;
     $('rmbFilterError').textContent = invalidRange ? 'Tanggal awal tidak boleh melebihi tanggal akhir.' : '';
@@ -212,8 +213,8 @@ async function startReimbursement() {
     updateButtons();
   }
   async function refreshRecords() { records = await listReimbursements(); renderRecords(); }
-  ['rmbSearch','rmbFilterStatus','rmbFrom','rmbTo'].forEach(id => $(id).addEventListener(id === 'rmbSearch' ? 'input' : 'change', renderRecords));
-  $('rmbClearFilters').addEventListener('click', () => { ['rmbSearch','rmbFilterStatus','rmbFrom','rmbTo'].forEach(id => $(id).value = ''); renderRecords(); });
+  ['rmbSearch','rmbFilterStatus','rmbFrom','rmbTo'].forEach(id => $(id)?.addEventListener(id === 'rmbSearch' ? 'input' : 'change', renderRecords));
+  $('rmbClearFilters')?.addEventListener('click', () => { ['rmbSearch','rmbFilterStatus','rmbFrom','rmbTo'].forEach(id => $(id).value = ''); renderRecords(); });
 
   async function editRecord(record) {
     if (busy || validatingImage) return;
@@ -233,7 +234,7 @@ async function startReimbursement() {
     updateButtons(); $('rmbForm').scrollIntoView({ behavior: 'smooth', block: 'start' }); $('rmbWorker').focus({ preventScroll: true });
   }
 
-  $('rmbTableBody').addEventListener('click', async event => {
+  $('rmbTableBody')?.addEventListener('click', async event => {
     const button = event.target.closest('[data-rmb-action]');
     if (!button || busy || validatingImage) return;
     const record = records.find(item => item.uid === button.dataset.uid);

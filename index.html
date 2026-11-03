@@ -107,24 +107,6 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;back
 <div class="actions rmb-form-actions"><button class="btn" type="submit" id="rmbSave" disabled>💾 SIMPAN REIMBURSEMENT</button><button class="btn silver" id="rmbReset" type="button">Batal Edit / Reset</button></div><div class="status" id="rmbStatus" role="status" aria-live="polite"></div>
 </form>
 <div class="panel" aria-label="Log Discord Reimbursement"><h3>💬 Log Discord</h3><p>Rekod baru, edit, perubahan status, dan penghapusan otomatis dikirim ke Discord bersama bukti screenshot yang tersimpan. Log yang gagal dikirim tetap berada dalam antrean setelah refresh.</p><div class="status" id="rmbDiscordStatus" role="status" aria-live="polite">Memeriksa antrean log...</div><div class="actions"><button class="btn silver" id="rmbRetryDiscord" type="button" hidden>🔄 COBA LAGI KIRIM LOG</button></div></div>
-<div class="rmb-stats" aria-label="Ringkasan reimbursement">
-<div class="stat"><span>Total Keseluruhan</span><b id="rmbTotal">$NR0</b></div>
-<div class="stat"><span>Pending</span><b id="rmbTotalPending">$NR0</b></div>
-<div class="stat"><span>Approved</span><b id="rmbTotalApproved">$NR0</b></div>
-<div class="stat"><span>Rejected</span><b id="rmbTotalRejected">$NR0</b></div>
-</div>
-<div class="panel"><h3>📋 Daftar Reimbursement</h3>
-<div class="rmb-filters">
-<div class="field"><label for="rmbSearch">Cari Nama</label><input id="rmbSearch" type="search" placeholder="Pekerja, instansi, atau customer"></div>
-<div class="field"><label for="rmbFilterStatus">Filter Status</label><select id="rmbFilterStatus"><option value="">Semua Status</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
-<div class="field"><label for="rmbFrom">Dari Tanggal</label><input id="rmbFrom" type="date"></div>
-<div class="field"><label for="rmbTo">Sampai Tanggal</label><input id="rmbTo" type="date"></div>
-</div>
-<div class="status error" id="rmbFilterError" role="status"></div>
-<div class="rmb-filter-actions"><span class="sub" id="rmbResultSummary" aria-live="polite">Memuat rekod...</span><button class="btn ghost sm" id="rmbClearFilters" type="button">Reset Filter</button></div>
-<div class="rmb-table-wrap" tabindex="0" role="region" aria-label="Tabel reimbursement; geser untuk melihat semua kolom">
-<table class="rmb-table"><caption>Nama pekerja, instansi, dan customer ditampilkan dalam tiga kolom terpisah.</caption><thead><tr><th scope="col">ID</th><th scope="col">Tanggal</th><th scope="col">Nama Pekerja</th><th scope="col">Nama Instansi</th><th scope="col">Nama Customer</th><th scope="col">Jumlah</th><th scope="col">Bukti</th><th scope="col">Status</th><th scope="col">Tindakan</th></tr></thead><tbody id="rmbTableBody"><tr><td colspan="9" class="rmb-empty">Memuat database...</td></tr></tbody></table>
-</div></div>
 </section>
 <dialog id="rmbViewer" aria-labelledby="rmbViewerTitle"><div class="rmb-viewer-heading"><h3 id="rmbViewerTitle">Bukti Reimbursement</h3><button class="btn silver sm" type="button" id="rmbViewerClose">Tutup</button></div><img id="rmbViewerImage" alt="Bukti reimbursement ukuran penuh"><a class="btn ghost" id="rmbViewerLink" target="_blank" rel="noopener">Buka / Download Ukuran Penuh</a></dialog>
 <footer class="foot">NARASI GARAGE • ALL-IN-ONE MANAGEMENT SYSTEM<br>Calculator / Data Recap / Withdraw & Deposit / Surat Izin Cuti / Reimbursement • Absensi tidak termasuk</footer></main>
@@ -406,5 +388,5 @@ form.addEventListener('reset',()=>{
 renderLeaveLetter();
 })();
 </script>
-<script type="module" src="assets/reimbursement.js?v=20261103-discord1"></script>
+<script type="module" src="assets/reimbursement.js?v=20261103-formonly1"></script>
 </body></html>

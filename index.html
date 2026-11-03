@@ -106,6 +106,7 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;back
 </div>
 <div class="actions rmb-form-actions"><button class="btn" type="submit" id="rmbSave" disabled>💾 SIMPAN REIMBURSEMENT</button><button class="btn silver" id="rmbReset" type="button">Batal Edit / Reset</button></div><div class="status" id="rmbStatus" role="status" aria-live="polite"></div>
 </form>
+<div class="panel" aria-label="Log Discord Reimbursement"><h3>💬 Log Discord</h3><p>Rekod baru, edit, perubahan status, dan penghapusan otomatis dikirim ke Discord bersama bukti screenshot yang tersimpan. Log yang gagal dikirim tetap berada dalam antrean setelah refresh.</p><div class="status" id="rmbDiscordStatus" role="status" aria-live="polite">Memeriksa antrean log...</div><div class="actions"><button class="btn silver" id="rmbRetryDiscord" type="button" hidden>🔄 COBA LAGI KIRIM LOG</button></div></div>
 <div class="rmb-stats" aria-label="Ringkasan reimbursement">
 <div class="stat"><span>Total Keseluruhan</span><b id="rmbTotal">$NR0</b></div>
 <div class="stat"><span>Pending</span><b id="rmbTotalPending">$NR0</b></div>
@@ -405,5 +406,5 @@ form.addEventListener('reset',()=>{
 renderLeaveLetter();
 })();
 </script>
-<script type="module" src="assets/reimbursement.js?v=20261103"></script>
+<script type="module" src="assets/reimbursement.js?v=20261103-discord1"></script>
 </body></html>

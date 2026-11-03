@@ -1,5 +1,6 @@
 import { STATUSES, MAX_IMAGE_BYTES, listReimbursements, getEvidence, saveReimbursement,
-  deleteReimbursement, filterReimbursements, formatAmount, totalAmount, localDate, openDatabase } from './reimbursement-store.js';
+  deleteReimbursement, filterReimbursements, formatAmount, totalAmount, localDate, openDatabase, listDiscordLogs } from './reimbursement-store.js?v=20261103-discord1';
+import { flushDiscordLogs } from './reimbursement-discord.js?v=20261103-discord1';
 
 const section = document.getElementById('section-reimbursement');
 if (section) startReimbursement().catch(error => {
@@ -16,7 +17,7 @@ async function startReimbursement() {
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   let records = [], editing = null, evidenceChange, previewUrl = null, viewerUrl = null;
   let busy = false, validatingImage = false, imageGeneration = 0;
-  let databaseReady = false;
+  let databaseReady = false, discordBusy = false;
   const channel = typeof BroadcastChannel === 'function' ? new BroadcastChannel('narasi-reimbursement-updates-v1') : null;
 
   function status(message, kind = '') {
@@ -34,11 +35,32 @@ async function startReimbursement() {
     $('rmbChooseFile').disabled = busy;
     $('rmbReset').disabled = busy;
     $('rmbRemovePhoto').disabled = busy || validatingImage;
+    $('rmbRetryDiscord').disabled = busy || discordBusy;
     form.querySelectorAll('input:not([type="file"]),select,textarea').forEach(field => { field.disabled = busy; });
     $('rmbTableBody').querySelectorAll('[data-rmb-action="edit"],[data-rmb-action="delete"]').forEach(button => { button.disabled = busy || validatingImage; });
     saveButton.textContent = busy ? '⏳ MENYIMPAN...' : editing ? '💾 SIMPAN PERUBAHAN' : '💾 SIMPAN REIMBURSEMENT';
     upload.setAttribute('aria-busy', String(validatingImage));
   }
+
+  async function syncDiscordLogs() {
+    if (discordBusy || !databaseReady) return;
+    discordBusy = true; updateButtons();
+    const notice = $('rmbDiscordStatus'), retry = $('rmbRetryDiscord');
+    try {
+      const result = await flushDiscordLogs(id => {
+        notice.className = 'status'; notice.textContent = '⏳ Mengirim log ' + id + ' beserta bukti ke Discord...';
+      });
+      retry.hidden = !result.pending;
+      notice.className = 'status ' + (result.pending ? 'warn' : 'ok');
+      notice.textContent = result.pending ? result.pending + ' log menunggu pengiriman. Klik Coba Lagi jika belum terkirim.' :
+        result.sent ? '✅ ' + result.sent + ' log berhasil masuk ke Discord.' : 'Log Discord aktif untuk tambah, edit, perubahan status, dan hapus rekod.';
+    } catch (error) {
+      retry.hidden = false; notice.className = 'status error';
+      const pending = await listDiscordLogs().then(rows => rows.length).catch(() => null);
+      notice.textContent = (pending === null ? 'Log' : pending + ' log') + ' belum terkirim. ' + error.message + ' Rekod tetap tersimpan di browser.';
+    } finally { discordBusy = false; updateButtons(); }
+  }
+  $('rmbRetryDiscord').addEventListener('click', () => syncDiscordLogs());
 
   function revokePreview() {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -226,10 +248,11 @@ async function startReimbursement() {
       } else if (button.dataset.rmbAction === 'delete') {
         if (!confirm('Hapus ' + record.displayId + ' beserta bukti screenshot? Tindakan ini tidak dapat dibatalkan.')) return;
         busy = true; updateButtons();
-        await deleteReimbursement(record.uid, record.revision);
+        await deleteReimbursement(record.uid, record.revision, { queueDiscord: true });
         if (editing?.uid === record.uid) resetForm();
         await refreshRecords(); channel?.postMessage('changed');
         status(record.displayId + ' berhasil dihapus.', 'ok');
+        await syncDiscordLogs();
       }
     } catch (error) { status(errorText(error), 'error'); }
     finally { busy = false; updateButtons(); }
@@ -245,10 +268,11 @@ async function startReimbursement() {
     };
     busy = true; updateButtons(); status('Menyimpan rekod dan bukti ke database...');
     try {
-      const record = await saveReimbursement(input, { uid: editing?.uid, revision: editing?.revision, evidence: evidenceChange });
+      const record = await saveReimbursement(input, { uid: editing?.uid, revision: editing?.revision, evidence: evidenceChange, queueDiscord: true });
       resetForm(); await refreshRecords(); channel?.postMessage('changed');
       status(record.displayId + ' berhasil disimpan' + (record.evidenceId ? ' bersama bukti screenshot.' : '.'), 'ok');
       if (navigator.storage?.persist) navigator.storage.persist().catch(() => {});
+      await syncDiscordLogs();
     } catch (error) { status(errorText(error), 'error'); }
     finally { busy = false; updateButtons(); }
   });
@@ -258,4 +282,5 @@ async function startReimbursement() {
   window.addEventListener('pagehide', () => { if (previewUrl) URL.revokeObjectURL(previewUrl); closeViewer(); });
   resetForm();
   await openDatabase(); databaseReady = true; await refreshRecords(); updateButtons();
+  await syncDiscordLogs();
 }

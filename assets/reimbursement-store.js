@@ -106,7 +106,7 @@ export async function getEvidence(id) {
 }
 
 // undefined keeps saved evidence; null removes it; an object replaces it.
-export async function saveReimbursement(input, { uid = null, revision = null, evidence } = {}) {
+export async function saveReimbursement(input, { uid = null, revision = null, evidence, queueDiscord = false } = {}) {
   const data = validateRecord(input);
   if (evidence && (!(evidence.blob instanceof Blob) || evidence.blob.size < 1 ||
       evidence.blob.size > MAX_IMAGE_BYTES || !['image/png', 'image/jpeg'].includes(evidence.blob.type))) {
@@ -143,6 +143,10 @@ export async function saveReimbursement(input, { uid = null, revision = null, ev
       createdAt: previous?.createdAt || now, updatedAt: now
     };
     records.put(record);
+    if (queueDiscord) {
+      const proof = evidenceId ? await requestResult(files.get(evidenceId)) : null;
+      await queueDiscordLog(tx, previous ? 'updated' : 'created', record, previous, proof, now);
+    }
     await done;
     return record;
   } catch (error) {
@@ -152,15 +156,19 @@ export async function saveReimbursement(input, { uid = null, revision = null, ev
   }
 }
 
-export async function deleteReimbursement(uid, revision) {
+export async function deleteReimbursement(uid, revision, { queueDiscord = false } = {}) {
   const db = await openDatabase();
-  const tx = db.transaction(['reimbursements', 'evidence'], 'readwrite');
+  const tx = db.transaction(['reimbursements', 'evidence', 'metadata'], 'readwrite');
   const done = transactionDone(tx);
   try {
     const records = tx.objectStore('reimbursements');
     const record = await requestResult(records.get(uid));
     if (!record) throw new Error('Rekod ini sudah dihapus.');
     if (record.revision !== revision) throw new Error('Rekod sudah berubah. Muat ulang sebelum menghapus.');
+    if (queueDiscord) {
+      const proof = record.evidenceId ? await requestResult(tx.objectStore('evidence').get(record.evidenceId)) : null;
+      await queueDiscordLog(tx, 'deleted', record, null, proof, new Date().toISOString());
+    }
     if (record.evidenceId) tx.objectStore('evidence').delete(record.evidenceId);
     records.delete(uid);
     await done;
@@ -169,6 +177,56 @@ export async function deleteReimbursement(uid, revision) {
     await done.catch(() => {});
     throw error;
   }
+}
+
+// Store an immutable event and image in the same transaction as the local change.
+// Queued evidence survives later edits/deletes and is removed after Discord confirms it.
+const DISCORD_QUEUE_PREFIX = 'discord-log:';
+async function queueDiscordLog(tx, action, record, previous, evidence, occurredAt) {
+  const eventId = uniqueId();
+  const metadata = tx.objectStore('metadata');
+  const counter = await requestResult(metadata.get('discord-sequence'));
+  const logSequence = Number(counter?.value || 0) + 1;
+  metadata.put({ key: 'discord-sequence', value: logSequence });
+  metadata.put({
+    key: DISCORD_QUEUE_PREFIX + eventId, eventId, action, record, previous,
+    evidence, occurredAt, logSequence, leaseToken: null, leaseUntil: 0
+  });
+}
+
+export async function listDiscordLogs() {
+  const db = await openDatabase();
+  const tx = db.transaction('metadata', 'readonly'), done = transactionDone(tx);
+  const rows = await requestResult(tx.objectStore('metadata').getAll());
+  await done;
+  return rows.filter(row => row.key.startsWith(DISCORD_QUEUE_PREFIX))
+    .sort((a, b) => (a.logSequence || 0) - (b.logSequence || 0) || a.occurredAt.localeCompare(b.occurredAt));
+}
+
+export async function claimDiscordLog(key) {
+  const db = await openDatabase();
+  const tx = db.transaction('metadata', 'readwrite'), done = transactionDone(tx);
+  const metadata = tx.objectStore('metadata');
+  const row = await requestResult(metadata.get(key));
+  let claimed = null;
+  if (row && row.key.startsWith(DISCORD_QUEUE_PREFIX) && row.leaseUntil <= Date.now()) {
+    claimed = { ...row, leaseToken: uniqueId(), leaseUntil: Date.now() + 90000 };
+    metadata.put(claimed);
+  }
+  await done;
+  return claimed;
+}
+
+export async function finishDiscordLog(key, leaseToken, delivered = true) {
+  const db = await openDatabase();
+  const tx = db.transaction('metadata', 'readwrite'), done = transactionDone(tx);
+  const metadata = tx.objectStore('metadata');
+  const row = await requestResult(metadata.get(key));
+  if (row && row.key.startsWith(DISCORD_QUEUE_PREFIX) && row.leaseToken === leaseToken) {
+    if (delivered) metadata.delete(key);
+    else metadata.put({ ...row, leaseToken: null, leaseUntil: 0 });
+  }
+  await done;
 }
 
 export function filterReimbursements(records, { query = '', status = '', from = '', to = '' } = {}) {

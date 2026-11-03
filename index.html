@@ -90,7 +90,6 @@ body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;back
 <div class="field"><label for="rmbAmount">Jumlah Reimbursement ($NR) *</label><input id="rmbAmount" name="amount" type="number" min="1" max="999999999999" step="1" inputmode="numeric" required placeholder="Contoh: 250000" aria-describedby="rmbAmountPreview"><div class="rmb-amount-preview" id="rmbAmountPreview" aria-live="polite">$NR0</div></div>
 <div class="fields">
 <div class="field"><label for="rmbDate">Tanggal Reimbursement (WIB) *</label><input id="rmbDate" name="date" type="date" required></div>
-<div class="field"><label for="rmbRecordStatus">Status *</label><select id="rmbRecordStatus" name="status" required><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select></div>
 </div>
 <div class="field"><label for="rmbNote">Keterangan</label><textarea id="rmbNote" name="note" maxlength="2000" placeholder="Sebab atau tujuan reimbursement"></textarea></div>
 </div>
@@ -388,5 +387,5 @@ form.addEventListener('reset',()=>{
 renderLeaveLetter();
 })();
 </script>
-<script type="module" src="assets/reimbursement.js?v=20261103-formonly1"></script>
+<script type="module" src="assets/reimbursement.js?v=20261103-nostatus1"></script>
 </body></html>

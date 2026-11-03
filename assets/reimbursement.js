@@ -186,7 +186,7 @@ async function startReimbursement() {
   function resetForm() {
     imageGeneration++; validatingImage = false; editing = null; evidenceChange = undefined;
     form.reset(); $('rmbWorker').setCustomValidity('');
-    $('rmbDate').value = localDate(); $('rmbRecordStatus').value = 'Pending';
+    $('rmbDate').value = localDate();
     $('rmbFormTitle').textContent = 'Tambah Reimbursement';
     $('rmbEditingId').hidden = true; $('rmbAmountPreview').textContent = '$NR0';
     revokePreview(); updateButtons();
@@ -222,7 +222,7 @@ async function startReimbursement() {
     $('rmbEditingId').textContent = record.displayId; $('rmbEditingId').hidden = false;
     $('rmbWorker').value = record.workerName; $('rmbAgency').value = record.agencyName; $('rmbCustomer').value = record.customerName;
     $('rmbAmount').value = record.amount; $('rmbAmountPreview').textContent = formatAmount(record.amount);
-    $('rmbNote').value = record.note; $('rmbDate').value = record.date; $('rmbRecordStatus').value = record.status;
+    $('rmbNote').value = record.note; $('rmbDate').value = record.date;
     if (record.evidenceId) {
       const generation = ++imageGeneration; validatingImage = true; updateButtons();
       try {
@@ -265,7 +265,7 @@ async function startReimbursement() {
     validateNames(); if (!form.reportValidity()) return;
     const input = {
       workerName: $('rmbWorker').value, agencyName: $('rmbAgency').value, customerName: $('rmbCustomer').value,
-      amount: $('rmbAmount').value, note: $('rmbNote').value, status: $('rmbRecordStatus').value, date: $('rmbDate').value
+      amount: $('rmbAmount').value, note: $('rmbNote').value, status: editing?.status || 'Pending', date: $('rmbDate').value
     };
     busy = true; updateButtons(); status('Menyimpan rekod dan bukti ke database...');
     try {

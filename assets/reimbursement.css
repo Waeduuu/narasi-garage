@@ -1,0 +1,46 @@
+#section-reimbursement .rmb-storage-note{border:1px solid #3c626c;border-radius:12px;background:#10272e;padding:12px 15px;color:#bddce2;font-size:12px;line-height:1.7;margin-bottom:18px}
+#section-reimbursement .rmb-form-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+#section-reimbursement .rmb-form-heading h3{margin:0}
+#section-reimbursement .rmb-names{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#section-reimbursement .rmb-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+#section-reimbursement .rmb-upload{border:1px dashed #4e8793;background:#0b2027;border-radius:12px;padding:20px;min-height:174px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;text-align:center;outline:none;cursor:text}
+#section-reimbursement .rmb-upload strong{font-size:15px;color:#d7f7fc}
+#section-reimbursement .rmb-upload p{margin:0;max-width:420px;font-size:12px;line-height:1.8}
+#section-reimbursement .rmb-upload:focus,#section-reimbursement .rmb-upload:focus-within,#section-reimbursement .rmb-upload.drag{border-color:#71e5ef;box-shadow:0 0 0 3px #55c6d22b;background:#14313a}
+#section-reimbursement .rmb-photo-button{display:block;width:100%;background:#071319;border:1px solid #365c67;border-radius:12px;padding:12px;cursor:zoom-in;margin-top:12px;color:#bde6ec;font:inherit;font-size:12px}
+#section-reimbursement .rmb-photo-button img{display:block;width:100%;height:200px;object-fit:contain;margin-bottom:8px}
+#section-reimbursement [hidden],#rmbViewer [hidden]{display:none!important}
+#section-reimbursement .rmb-evidence-footer{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:10px}
+#section-reimbursement #rmbPhotoName{overflow-wrap:anywhere;min-width:0}
+#section-reimbursement .rmb-amount-preview{font-size:18px;font-weight:800;color:var(--green);margin-top:6px;overflow-wrap:anywhere}
+#section-reimbursement .rmb-form-actions{border-top:1px solid #334c55;padding-top:18px;margin-top:16px}
+#section-reimbursement .rmb-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+#section-reimbursement .rmb-stats .stat{min-width:0}
+#section-reimbursement .rmb-stats b{font-size:19px;overflow-wrap:anywhere}
+#section-reimbursement .rmb-filters{display:grid;grid-template-columns:minmax(180px,2fr) repeat(3,minmax(130px,1fr));gap:12px}
+#section-reimbursement .rmb-filter-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:6px 0 16px}
+#section-reimbursement .rmb-table-wrap{overflow:auto;border:1px solid #34515c;border-radius:12px;max-width:100%}
+#section-reimbursement .rmb-table-wrap:focus{outline:2px solid var(--cyan);outline-offset:3px}
+#section-reimbursement .rmb-table{width:100%;min-width:1080px;border-collapse:collapse;text-align:left;font-size:12px}
+#section-reimbursement .rmb-table caption{text-align:left;padding:12px 14px;background:#0c1b21;color:#bcd9df;font-size:12px}
+#section-reimbursement .rmb-table th{background:#102d35;padding:13px 12px;color:#a1e8f1;white-space:nowrap}
+#section-reimbursement .rmb-table td{padding:14px 12px;border-top:1px solid #2d4852;vertical-align:top;overflow-wrap:anywhere;max-width:190px}
+#section-reimbursement .rmb-table tbody tr:nth-child(even){background:#0c1b213b}
+#section-reimbursement .rmb-table tbody tr:hover{background:#19374066}
+#section-reimbursement .rmb-amount-cell{font-weight:800;white-space:nowrap;color:#c3f1f4}
+#section-reimbursement .rmb-row-actions{display:flex;gap:6px;flex-wrap:nowrap}
+#section-reimbursement .rmb-empty{text-align:center;padding:35px 18px;color:var(--muted)}
+#section-reimbursement .rmb-badge{display:inline-block;padding:4px 9px;border-radius:7px;font-size:11px;font-weight:800;border:1px solid transparent}
+#section-reimbursement .rmb-badge.pending{background:#3a2c12;color:#ffe1a2;border-color:#705a2f}
+#section-reimbursement .rmb-badge.approved{background:#123a31;color:#9af3d8;border-color:#316e5b}
+#section-reimbursement .rmb-badge.rejected{background:#3b1922;color:#ffb4c0;border-color:#7f3948}
+#rmbViewer{background:#101e25;color:#edfafd;border:1px solid #4a7683;border-radius:16px;width:min(1100px,96vw);max-height:94vh;padding:20px}
+#rmbViewer::backdrop{background:#000c}
+#rmbViewer .rmb-viewer-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+#rmbViewer h3{margin:0;font-size:18px}
+#rmbViewerImage{display:block;width:100%;max-height:70vh;object-fit:contain;background:#050d11;border-radius:10px;margin-bottom:16px}
+.nav{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media(max-width:1100px){.nav{grid-template-columns:repeat(3,minmax(0,1fr))}#section-reimbursement .rmb-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){#section-reimbursement .rmb-form-grid{grid-template-columns:1fr}#section-reimbursement .rmb-names{grid-template-columns:1fr}#section-reimbursement .rmb-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:750px){.nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:450px){.nav{grid-template-columns:1fr}#section-reimbursement .rmb-filters{grid-template-columns:1fr}#section-reimbursement .rmb-stats b{font-size:15px}#section-reimbursement .rmb-evidence-footer{align-items:flex-start;flex-direction:column}}
